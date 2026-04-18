@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="Portfolio Automation Suite">
+
+    <listeners>
+        <listener class-name="com.tuyet.listeners.ExcelListener" />
+    </listeners>
+
+    <test name="Tuyet Portfolio Functional Tests">
+        <classes>
+            <class name="com.tuyet.tests.HomeTest" />
+            <class name="com.tuyet.tests.AboutTest" />
+            <class name="com.tuyet.tests.ThemeSyncTest" />
+            <class name="com.tuyet.tests.UltimatePortfolioTest" />
+        </classes>
+    </test>
+</suite>
