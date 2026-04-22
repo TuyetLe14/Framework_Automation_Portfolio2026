@@ -20,16 +20,17 @@ public class BaseTest {
     public void createDriver(Method method) {
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--remote-allow-origins=*");
+        // Fix lỗi: Thêm headless nếu cần chạy CI/CD sau này
+        // options.addArguments("--headless=new");
         driver = new ChromeDriver(options);
         driver.manage().window().maximize();
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(15));
-        String testName = method.getName() + "_" + this.getClass().getSimpleName().replace("Test", "");
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+        driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(60));
 
-        if (System.getProperty("isRetry") != null && System.getProperty("isRetry").equals("true")) {
+        if ("true".equals(System.getProperty("isRetry"))) {
             System.out.println("🎥 ĐANG TÁI HIỆN BUG - QUAY VIDEO CHẬM...");
             VideoRecorder.startRecording(method.getName() + "_Reproduce");
         }
-        driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(60));
     }
 
     @AfterMethod
@@ -37,19 +38,20 @@ public class BaseTest {
         String pageName = this.getClass().getSimpleName().replace("Test", "");
 
         if (result.getStatus() == ITestResult.FAILURE) {
-            CaptureHelpers.takeScreenshot(driver, result.getName(), pageName);
-            System.out.println("📸 Đã đóng khung đỏ và chụp ảnh vị trí lỗi.");
-
-            // 2. KIỂM TRA: Nếu case này phức tạp (có Retry) thì mới giữ Video
+                CaptureHelpers.takeScreenshot(driver, result.getName(), pageName);
+                System.out.println("📸 Đã chụp ảnh vị trí lỗi tại trang: " + pageName);
             if (result.getMethod().getRetryAnalyzer(result) != null) {
                 VideoRecorder.stopAndKeepVideo();
-                System.out.println("🎥 Case nhiều bước: Đã lưu video tái hiện bug.");
+                System.out.println("🎥 Đã lưu video tái hiện bug.");
             } else {
                 VideoRecorder.stopAndDeleteVideo();
             }
         } else {
             VideoRecorder.stopAndDeleteVideo();
         }
-        driver.quit();
+
+        if (driver != null) {
+            driver.quit();
+        }
     }
 }

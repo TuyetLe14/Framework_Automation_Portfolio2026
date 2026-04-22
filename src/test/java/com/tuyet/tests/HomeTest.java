@@ -1,8 +1,7 @@
 package com.tuyet.tests;
 
-import java.time.Duration;
-
 import org.openqa.selenium.By;
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -16,78 +15,67 @@ import com.tuyet.pages.HomePage;
 
 public class HomeTest extends BaseTest {
 
-    @Test(priority = 1, description = "Test 1: Kiểm tra SEO và Nội dung Hero Section")
-    public void testHeroSection() {
-        driver.get(ConfigsData.URL);
-        HomePage homePage = new HomePage(driver);
+    @Test(priority = 1, description = "Test 1: Kiểm tra thông tin cơ bản trên trang Home")
+    public void testBasicInfo() {
+        getDriver().get(ConfigsData.URL);
+        HomePage homePage = new HomePage(getDriver());
 
-        String title = homePage.getPageTitle();
-        System.out.println("Page Title: " + title);
-        Assert.assertNotNull(title, "Title không được trống!");
+        Assert.assertNotNull(homePage.getPageTitle(), "Title không được trống!");
 
-        Assert.assertTrue(homePage.getNameText().toUpperCase().contains("ANH TUYET"), "Lỗi: Tên hiển thị không đúng!");
+        Assert.assertTrue(homePage.getNameText().toUpperCase().contains("LE HUYNH ANH TUYET"), "Lỗi: Tên hiển thị không đúng!");
         Assert.assertTrue(homePage.isPortraitVisible(), "Lỗi: Không load được ảnh chân dung!");
     }
 
     @Test(priority = 2, description = "Test 2: Kiểm tra logic chuyển đổi Theme (Dark/Light)")
-    public void testThemeSwitching() throws InterruptedException {
-        driver.get(ConfigsData.URL);
-        HomePage homePage = new HomePage(driver);
+    public void testThemeSwitching() {
+        getDriver().get(ConfigsData.URL);
+        HomePage homePage = new HomePage(getDriver());
 
         String beforeColor = homePage.getBgColor();
+
         homePage.toggleTheme();
-
-        Thread.sleep(1500);
-
-        String afterColor = homePage.getBgColor();
+        
+        String afterColor = homePage.getBgColorAfterSwitch(beforeColor);
         System.out.println("Màu trước: " + beforeColor + " | Màu sau: " + afterColor);
 
-        String cleanBefore = beforeColor.replace(" ", "").replace(",1)", ")").replace("a(", "(");
-        String cleanAfter = afterColor.replace(" ", "").replace(",1)", ")").replace("a(", "(");
-
-        Assert.assertNotEquals(cleanBefore, cleanAfter, "Lỗi: Màu nền không thay đổi sau khi Switch!");
+        Assert.assertNotEquals(beforeColor.replaceAll("\\s+", ""), afterColor.replaceAll("\\s+", ""),
+                "Lỗi: Màu nền không thay đổi sau khi Switch!");
     }
 
-    @Test(priority = 3, description = "Test 3: Kiểm tra định dạng các đường dẫn (Links Format)")
-    public void testLinkUrlsFormat() {
-        driver.get(ConfigsData.URL);
-        HomePage homePage = new HomePage(driver);
-        SoftAssert softAssert = new SoftAssert();
-        String cvLink = homePage.getCVHref();
-        softAssert.assertNotNull(cvLink, "Link CV bị null!");
-        if (cvLink != null)
-            softAssert.assertTrue(cvLink.endsWith(".pdf"), "Link CV phải trỏ tới file PDF!");
+    @Test(priority = 3, description = "Kiểm tra nút Download CV")
+    public void testCVDownloadLink() {
+        getDriver().get(ConfigsData.URL);
+        HomePage homePage = new HomePage(getDriver());
 
-        softAssert.assertTrue(homePage.getGithubHref().contains("github.com"), "Link Github không hợp lệ!");
-        softAssert.assertAll();
+        String cvHref = homePage.getCVHref();
+        System.out.println("Link CV: " + cvHref);
+
+        Assert.assertTrue(cvHref.endsWith(".pdf"), "Lỗi: Link CV không phải file PDF!");
+        Assert.assertEquals(homePage.verifyLinkStatus(cvHref), 200, "Lỗi: Link CV bị die (404)!");
     }
 
-    @Test
-    public void testLinkResponseCodes() {
-        try {
-            driver.get(ConfigsData.URL);
+    @Test(priority = 4, description = "Test 4: Kiểm tra tính đúng đắn của các link mạng xã hội")
+    public void testSocialLinks() {
+        getDriver().get(ConfigsData.URL);
+        HomePage homePage = new HomePage(getDriver());
 
-            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(15));
+        Assert.assertEquals(homePage.getGithubHref(), "https://github.com/TuyetLe14");
+        Assert.assertTrue(homePage.getFacebookHref().contains("facebook.com/tuyet.lehuynhanh"));
+        Assert.assertTrue(homePage.getTiktokHref().contains("tiktok.com"));
+    }
 
-            wait.until(ExpectedConditions.titleContains("Portfolio"));
-            System.out.println("🚩 Đang ở URL thực tế: " + driver.getCurrentUrl());
+    @Test(priority = 5, description = "5. Kiểm tra Responsive Layout (Mobile vs Desktop)")
+    public void testResponsiveLayout() {
+        getDriver().get(ConfigsData.URL);
+        HomePage homePage = new HomePage(getDriver());
+        getDriver().manage().window().setSize(new Dimension(390, 844));
 
-            WebElement cvLink = wait.until(ExpectedConditions.presenceOfElementLocated(
-                    By.xpath("//a[contains(., 'Download') and contains(., 'CV')]")));
+        String layoutClass = homePage.getContentGridClass();
+        System.out.println("Layout Class trên Mobile: " + layoutClass);
 
-            String finalUrl = cvLink.getAttribute("href");
-            System.out.println("🔗 Link tìm thấy: " + finalUrl);
+        Assert.assertTrue(layoutClass.contains("flex-col"), 
+        "Lỗi: Mobile layout không chuyển sang dạng cột! Class tìm thấy: " + layoutClass);
 
-            java.net.URL url = new java.net.URL(finalUrl);
-            java.net.HttpURLConnection huc = (java.net.HttpURLConnection) url.openConnection();
-            huc.setRequestMethod("GET");
-            huc.connect();
-
-            Assert.assertEquals(huc.getResponseCode(), 200, "❌ Lỗi 404: " + finalUrl);
-            System.out.println("✅ CASE NÀY CHẮC CHẮN XANH RỒI!");
-
-        } catch (Exception e) {
-            Assert.fail("❌ Lỗi: " + e.getMessage());
-        }
+        getDriver().manage().window().maximize();
     }
 }

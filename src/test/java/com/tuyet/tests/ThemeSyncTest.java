@@ -11,42 +11,70 @@ import org.testng.annotations.Test;
 public class ThemeSyncTest extends BaseTest {
 
     @Test(priority = 1, description = "Case 1: Kiểm tra đồng bộ Theme xuyên suốt (Theme Sync)")
-    public void testThemeSyncBetweenPages() throws InterruptedException {
-        driver.get(ConfigsData.URL);
-        HomePage homePage = new HomePage(driver);
+    public void testThemeSyncBetweenPages() {
+        org.openqa.selenium.support.ui.WebDriverWait wait = new org.openqa.selenium.support.ui.WebDriverWait(getDriver(), java.time.Duration.ofSeconds(10));
+        getDriver().get(ConfigsData.URL);
+        HomePage homePage = new HomePage(getDriver());
 
+        String oldColor = homePage.getBgColor();
         homePage.toggleTheme();
-        Thread.sleep(1500);
-        String homeBg = homePage.getCurrentThemeBackground();
+        homePage.getBgColorAfterSwitch(oldColor);
 
         homePage.goToAboutPage();
 
-        AboutPage aboutPage = new AboutPage(driver);
-        Thread.sleep(1000); 
+        AboutPage aboutPage = new AboutPage(getDriver());
+        wait.until(d -> aboutPage.isLightModeActive());
 
-        String aboutBg = aboutPage.getBgColor();
-        System.out.println("Màu Home: " + homeBg + " | Màu About: " + aboutBg);
-
-        Assert.assertEquals(aboutBg, homeBg, "Lỗi: Chuyển trang (bằng menu) là bị mất Theme!");
+        Assert.assertTrue(aboutPage.isLightModeActive(), 
+        "Lỗi: Sang trang About nhưng không thấy Light Mode active!");
     }
 
-    @Test(priority = 2, description = "Case 2: Kiểm tra dữ liệu cá nhân & Ảnh")
+    @Test(priority = 2, description = "Case 2: Kiểm tra giữ Theme sau khi F5 (Reload) trang")
+    public void testThemePersistenceOnReload() {
+        getDriver().get(ConfigsData.URL);
+        HomePage homePage = new HomePage(getDriver());
+
+        String oldColor = homePage.getBgColor();
+        homePage.toggleTheme();
+        homePage.getBgColorAfterSwitch(oldColor);
+
+        homePage.goToAboutPage();
+        AboutPage aboutPage = new AboutPage(getDriver());
+        aboutPage.waitForPageLoaded();
+
+        boolean isLightBefore = aboutPage.isLightModeActive();
+        System.out.println("Trước khi Reload - Is Light Mode: " + isLightBefore);
+
+        getDriver().navigate().refresh();
+        aboutPage.waitForPageLoaded();
+
+        boolean isLightAfter = aboutPage.isLightModeActive();
+        System.out.println("Sau khi Reload - Is Light Mode: " + isLightAfter);
+
+        Assert.assertEquals(aboutPage.isLightModeActive(), isLightBefore,
+                "Lỗi: Reload trang là bị reset Theme (Dữ liệu chưa được lưu vào LocalStorage)");
+    }
+
+    @Test(priority = 3, description = "Case 3: Kiểm tra tính toàn vẹn dữ liệu trang About")
     public void testAboutDataIntegrity() {
-        driver.get(ConfigsData.URL + "/about");
-        AboutPage aboutPage = new AboutPage(driver);
+        getDriver().get(ConfigsData.URL + "/#/about");
+        AboutPage aboutPage = new AboutPage(getDriver());
+        aboutPage.waitForPageLoaded();
 
         Assert.assertEquals(aboutPage.getEmail(), "lehuynhanh.tuyet10@gmail.com", "Email sai!");
-        Assert.assertTrue(aboutPage.isPortraitVisible(), "Ảnh profile không hiện!");
+        Assert.assertEquals(aboutPage.getPhone(), "0817493884", "Số điện thoại sai!");
+        Assert.assertTrue(aboutPage.isPortraitImageLoaded(), "Ảnh profile không hiện!");
     }
 
-    @Test(priority = 3, description = "Case 3: Kiểm tra Responsive (Co giãn màn hình)")
+    @Test(priority = 4, description = "Case 4: Kiểm tra Responsive Layout trên Mobile")
     public void testResponsiveLayout() {
-        driver.get(ConfigsData.URL + "/about");
-        AboutPage aboutPage = new AboutPage(driver);
+        getDriver().get(ConfigsData.URL + "/#/about");
+        AboutPage aboutPage = new AboutPage(getDriver());
 
-        driver.manage().window().setSize(new Dimension(390, 844));
+        getDriver().manage().window().setSize(new Dimension(390, 844));
+        aboutPage.waitForLayoutChange();
         Assert.assertTrue(aboutPage.isStackedLayout(), "Lỗi: Mobile mà giao diện không xếp chồng!");
 
-        driver.manage().window().maximize();
+        getDriver().manage().window().maximize();
     }
 }

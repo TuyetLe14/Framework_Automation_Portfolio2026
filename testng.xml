@@ -6,12 +6,22 @@
         <listener class-name="com.tuyet.listeners.ExcelListener" />
     </listeners>
 
-    <test name="Tuyet Portfolio Functional Tests">
+    <test name="Home Page Tests">
         <classes>
             <class name="com.tuyet.tests.HomeTest" />
-            <class name="com.tuyet.tests.AboutTest" />
-            <class name="com.tuyet.tests.ThemeSyncTest" />
-            <class name="com.tuyet.tests.UltimatePortfolioTest" />
         </classes>
     </test>
+
+    <test name="About Page Tests">
+        <classes>
+            <class name="com.tuyet.tests.AboutTest" />
+        </classes>
+    </test>
+
+    <test name="Theme Synchronization Tests">
+        <classes>
+            <class name="com.tuyet.tests.ThemeSyncTest" />
+        </classes>
+    </test>
+
 </suite>

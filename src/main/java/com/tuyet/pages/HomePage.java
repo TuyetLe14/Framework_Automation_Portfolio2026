@@ -2,7 +2,6 @@ package com.tuyet.pages;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.time.Duration;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -11,15 +10,15 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-public class HomePage {
-    private WebDriver driver;
-    private WebDriverWait wait;
+public class HomePage extends BasePage {
 
-    private By nameHeading = By.xpath("//h1//span");
+    private By nameHeading = By.xpath("//h1");
     private By themeSwitch = By.xpath("//span[text()='SWITCH']/preceding-sibling::div");
     private By mainContainer = By.xpath("//div[contains(@class, 'min-h-screen')]");
     private By portraitImg = By.xpath("//img[@alt='Portrait']");
-    private By aboutMenu = By.xpath("//button[.//span[text()='About']]");
+    private By aboutMenu = By.xpath("//a[contains(@href, 'about')]");
+    private By contentGrid = By.xpath("//div[contains(@class, 'flex-col') or contains(@class, 'md:flex-row')]");
+    private By mobileMenuButton = By.xpath("//button[contains(@class, 'md:hidden')]");
 
     private By cvLink = By.xpath("//a[contains(@href, '.pdf')]");
     private By githubLink = By.xpath("//a[contains(@href, 'github.com')]");
@@ -27,29 +26,22 @@ public class HomePage {
     private By tiktokLink = By.xpath("//a[contains(@href, 'tiktok.com')]");
 
     public HomePage(WebDriver driver) {
-        this.driver = driver;
-        this.wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        super(driver);
+    }
+
+    public HomePage toggleTheme() {
+        clickElement(themeSwitch);
+        return this;
     }
 
     public void goToAboutPage() {
-        try {
-            WebElement btn = wait.until(ExpectedConditions.presenceOfElementLocated(aboutMenu));
-            ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", btn);
-            ((JavascriptExecutor) driver).executeScript("arguments[0].click();", btn);
-
-            Thread.sleep(1000);
-        } catch (Exception e) {
-            System.out.println("Lỗi điều hướng: " + e.getMessage());
-            driver.findElement(aboutMenu).click();
-        }
+        wait.until(ExpectedConditions.visibilityOfElementLocated(nameHeading));
+        clickElement(aboutMenu);
+        wait.until(ExpectedConditions.urlContains("about"));
     }
 
     public String getPageTitle() {
         return driver.getTitle();
-    }
-
-    public void toggleTheme() {
-        wait.until(ExpectedConditions.elementToBeClickable(themeSwitch)).click();
     }
 
     public String getCurrentThemeBackground() {
@@ -57,35 +49,22 @@ public class HomePage {
                 .getCssValue("background-color");
     }
 
-    // Giữ hàm cũ của Tuyết để không lỗi các test case cũ
     public String getBgColor() {
         return getCurrentThemeBackground();
     }
 
-    // --- 3. Content Actions ---
+    public String getBgColorAfterSwitch(String oldColor) {
+        wait.until(d -> !getCurrentThemeBackground().equalsIgnoreCase(oldColor));
+        return getCurrentThemeBackground();
+    }
+
     public String getNameText() {
         return wait.until(ExpectedConditions.visibilityOfElementLocated(nameHeading))
                 .getText().replace("\n", " ");
     }
 
     public boolean isPortraitVisible() {
-        return wait.until(ExpectedConditions.visibilityOfElementLocated(portraitImg)).isDisplayed();
-    }
-
-    public String getCVHref() {
-        return driver.findElement(cvLink).getAttribute("href");
-    }
-
-    public String getGithubHref() {
-        return driver.findElement(githubLink).getAttribute("href");
-    }
-
-    public String getFacebookHref() {
-        return driver.findElement(facebookLink).getAttribute("href");
-    }
-
-    public String getTiktokHref() {
-        return driver.findElement(tiktokLink).getAttribute("href");
+        return isElementPresent(portraitImg);
     }
 
     public int verifyLinkStatus(String urlString) {
@@ -95,17 +74,48 @@ public class HomePage {
             connection.setRequestMethod("GET");
             connection.setConnectTimeout(5000);
             connection.connect();
-            return connection.getResponseCode();
+            int code = connection.getResponseCode();
+            connection.disconnect();
+            return code;
         } catch (Exception e) {
             return 404;
         }
     }
 
-    public void clickAboutMenu() {
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(15));
-        WebElement aboutBtn = wait.until(ExpectedConditions.presenceOfElementLocated(
-                By.xpath("//a[contains(@href, '/#/about')]")));
+    public String getCVHref() {
+        return getAttribute(cvLink, "href");
+    }
 
-        ((JavascriptExecutor) driver).executeScript("arguments[0].click();", aboutBtn);
+    public String getGithubHref() {
+        return getAttribute(githubLink, "href");
+    }
+
+    public String getFacebookHref() {
+        return getAttribute(facebookLink, "href");
+    }
+
+    public String getTiktokHref() {
+        return getAttribute(tiktokLink, "href");
+    }
+
+    public String getContentGridClass() {
+        return getAttribute(contentGrid, "class");
+    }
+
+    public String getMainContainerClass() {
+        return getAttribute(mainContainer, "class");
+    }
+
+    public String getThemeClass() {
+        return getAttribute(mainContainer, "class");
+    }
+
+    public boolean isStackedLayout() {
+        return getAttribute(mainContainer, "class").contains("flex-col");
+    }
+
+    public HomePage openMobileMenu() {
+        wait.until(ExpectedConditions.elementToBeClickable(mobileMenuButton)).click();
+        return this;
     }
 }

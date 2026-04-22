@@ -1,6 +1,7 @@
 package com.tuyet.utils;
 
 import org.monte.media.Format;
+import org.monte.media.FormatKeys.MediaType;
 import org.monte.media.Registry;
 import org.monte.media.math.Rational;
 import org.monte.screenrecorder.ScreenRecorder;
@@ -35,32 +36,55 @@ public class VideoRecorder extends ScreenRecorder {
     public static void startRecording(String testCaseName) {
         try {
             String dateFolder = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-            File file = new File("videos/" + dateFolder);
+
+            File file = new File("Test_Reports/" + dateFolder + "/Videos/");
+
+            if (!file.exists()) {
+                file.mkdirs();
+            }
+
             Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
             Rectangle captureSize = new Rectangle(0, 0, screenSize.width, screenSize.height);
-            GraphicsConfiguration gc = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice()
+
+            GraphicsConfiguration gc = GraphicsEnvironment.getLocalGraphicsEnvironment()
+                    .getDefaultScreenDevice()
                     .getDefaultConfiguration();
 
             screenRecorder = new VideoRecorder(gc, captureSize,
                     new Format(MediaTypeKey, MediaType.FILE, MimeTypeKey, MIME_AVI),
                     new Format(MediaTypeKey, MediaType.VIDEO, EncodingKey, ENCODING_AVI_TECHSMITH_SCREEN_CAPTURE,
-                            CompressorNameKey, ENCODING_AVI_TECHSMITH_SCREEN_CAPTURE, DepthKey, 24, FrameRateKey,
-                            Rational.valueOf(15), QualityKey, 1.0f, KeyFrameIntervalKey, 15 * 60),
+                            CompressorNameKey, ENCODING_AVI_TECHSMITH_SCREEN_CAPTURE,
+                            DepthKey, 24,
+                            FrameRateKey, Rational.valueOf(15),
+                            QualityKey, 1.0f,
+                            KeyFrameIntervalKey, 15 * 60),
                     new Format(MediaTypeKey, MediaType.VIDEO, EncodingKey, "black", FrameRateKey, Rational.valueOf(30)),
                     null, file, testCaseName);
+
             screenRecorder.start();
+            System.out.println("🎥 Đang quay video cho Test Case: " + testCaseName);
+
         } catch (Exception e) {
+            System.err.println("❌ Lỗi khi khởi động quay video: " + e.getMessage());
             e.printStackTrace();
         }
     }
 
-    public static void stopAndKeepVideo() {
+    public static String stopAndKeepVideo() {
         try {
-            if (screenRecorder != null)
+            if (screenRecorder != null) {
                 screenRecorder.stop();
+                List<File> createdMovieFiles = screenRecorder.getCreatedMovieFiles();
+                if (!createdMovieFiles.isEmpty()) {
+                    String videoPath = createdMovieFiles.get(0).getAbsolutePath();
+                    System.out.println("🎥 Video saved at: " + videoPath);
+                    return videoPath; 
+                }
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return "";
     }
 
     public static void stopAndDeleteVideo() {
