@@ -15,8 +15,9 @@ import static org.monte.media.FormatKeys.*;
 import static org.monte.media.VideoFormatKeys.*;
 
 public class VideoRecorder extends ScreenRecorder {
-    public static ScreenRecorder screenRecorder;
-    public String name;
+    private static final ThreadLocal<VideoRecorder> CURRENT_RECORDER =
+            new ThreadLocal<>();
+    public final String name;
 
     public VideoRecorder(GraphicsConfiguration cfg, Rectangle captureArea, Format fileFormat,
             Format screenFormat, Format mouseFormat, Format audioFormat, File movieFolder, String name)
@@ -27,20 +28,34 @@ public class VideoRecorder extends ScreenRecorder {
 
     @Override
     protected File createMovieFile(Format fileFormat) throws IOException {
-        if (!movieFolder.exists())
-            movieFolder.mkdirs();
+        if (!movieFolder.exists() && !movieFolder.mkdirs()) {
+            throw new IOException(
+                    "Unable to create video directory: "
+                            + movieFolder.getAbsolutePath()
+            );
+        }
         String timeStamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH-mm-ss"));
         return new File(movieFolder, name + "_" + timeStamp + "." + Registry.getInstance().getExtension(fileFormat));
     }
 
     public static void startRecording(String testCaseName) {
         try {
+            stopAndDeleteVideo();
             String dateFolder = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 
-            File file = new File("Test_Reports/" + dateFolder + "/Videos/");
+            File videoDirectory = new File(
+                    "Test_Reports/"
+                            + dateFolder
+                            + "/Videos/"
+            );
 
-            if (!file.exists()) {
-                file.mkdirs();
+            if (!videoDirectory.exists()
+                    && !videoDirectory.mkdirs()) {
+
+                throw new IOException(
+                        "Unable to create video directory: "
+                                + videoDirectory.getAbsolutePath()
+                );
             }
 
             Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -50,7 +65,7 @@ public class VideoRecorder extends ScreenRecorder {
                     .getDefaultScreenDevice()
                     .getDefaultConfiguration();
 
-            screenRecorder = new VideoRecorder(gc, captureSize,
+            VideoRecorder recorder = new VideoRecorder(gc, captureSize,
                     new Format(MediaTypeKey, MediaType.FILE, MimeTypeKey, MIME_AVI),
                     new Format(MediaTypeKey, MediaType.VIDEO, EncodingKey, ENCODING_AVI_TECHSMITH_SCREEN_CAPTURE,
                             CompressorNameKey, ENCODING_AVI_TECHSMITH_SCREEN_CAPTURE,
@@ -61,44 +76,77 @@ public class VideoRecorder extends ScreenRecorder {
                     new Format(MediaTypeKey, MediaType.VIDEO, EncodingKey, "black", FrameRateKey, Rational.valueOf(30)),
                     null, file, testCaseName);
 
-            screenRecorder.start();
+            CURRENT_RECORDER.set(recorder);
+
+            recorder.start();
             System.out.println("🎥 Đang quay video cho Test Case: " + testCaseName);
 
         } catch (Exception e) {
+            CURRENT_RECORDER.remove();
             System.err.println("❌ Lỗi khi khởi động quay video: " + e.getMessage());
             e.printStackTrace();
         }
     }
 
     public static String stopAndKeepVideo() {
+        VideoRecorder recorder = CURRENT_RECORDER.get();
+        if (recorder == null) {
+            return "";
+        }
         try {
-            if (screenRecorder != null) {
-                screenRecorder.stop();
-                List<File> createdMovieFiles = screenRecorder.getCreatedMovieFiles();
-                if (!createdMovieFiles.isEmpty()) {
-                    String videoPath = createdMovieFiles.get(0).getAbsolutePath();
+            recorder.stop();
+
+            List<File> createdMovieFiles =
+                    recorder.getCreatedMovieFiles();
+            if (createdMovieFiles != null && !createdMovieFiles.isEmpty()) {
+                File videoFile = createdMovieFiles.get(0);
+                if (videoFile.exists()) {
+                    String videoPath = videoFile.getAbsolutePath();
                     System.out.println("🎥 Video saved at: " + videoPath);
                     return videoPath; 
                 }
             }
         } catch (IOException e) {
+            System.err.println(
+                    "❌ Lỗi khi dừng quay video: "
+                            + e.getMessage()
+            );
             e.printStackTrace();
-        }
+        } finally {
+
+            CURRENT_RECORDER.remove();
+    }
         return "";
     }
 
     public static void stopAndDeleteVideo() {
+        VideoRecorder recorder = CURRENT_RECORDER.get();
+        if (recorder == null) {
+            return;
+        }
         try {
-            if (screenRecorder != null) {
-                screenRecorder.stop();
-                List<File> createdMovieFiles = screenRecorder.getCreatedMovieFiles();
+            recorder.stop();
+            List<File> createdMovieFiles =
+                    recorder.getCreatedMovieFiles();
+            
+            if (createdMovieFiles != null) {
                 for (File movie : createdMovieFiles) {
-                    if (movie.exists())
-                        movie.delete();
+                    if (movie != null && movie.exists()){
+                        if (!movie.delete()) {
+                            System.err.println(
+                                    "⚠️ Không thể xóa video: "
+                                            + movie.getAbsolutePath()
+                            );
+                        }    
+                    }
                 }
             }
         } catch (IOException e) {
+            System.err.println(
+                    "❌ Lỗi khi dừng/xóa video: "
+                            + e.getMessage()
+            );
             e.printStackTrace();
-        }
+        }finally { CURRENT_RECORDER.remove();}
     }
 }
