@@ -1,5 +1,6 @@
 package com.tuyet.base;
 
+import com.tuyet.constants.ConfigsData;
 import com.tuyet.utils.CaptureHelpers;
 import com.tuyet.utils.VideoRecorder;
 import org.openqa.selenium.WebDriver;
@@ -19,17 +20,24 @@ public class BaseTest {
     public void createDriver(Method method) {
         DriverManager.createDriver();
         driver = DriverManager.getDriver();
+        if (ConfigsData.VIDEO_ENABLED) {
 
-        if ("true".equalsIgnoreCase(
+            boolean shouldRecordVideo =
+                    ConfigsData.VIDEO_RECORD_ALL
+                            || "true".equalsIgnoreCase(
+                            System.getProperty("isRetry", "false")
+                    );
+            if (shouldRecordVideo) {
+                String videoName = method.getName();
+                if ("true".equalsIgnoreCase(
                 System.getProperty("isRetry", "false"))) {
-
-            System.out.println(
-                    "🎥 ĐANG TÁI HIỆN BUG - QUAY VIDEO CHẬM..."
-            );
-
-            VideoRecorder.startRecording(
-                    method.getName() + "_Reproduce"
-            );
+                    videoName += "_Reproduce";
+                    System.out.println(
+                            "🎥 ĐANG TÁI HIỆN BUG - QUAY VIDEO..."
+                    );
+                }
+                VideoRecorder.startRecording(videoName);
+            }
         }
     }
 
@@ -37,8 +45,9 @@ public class BaseTest {
     public void tearDown(ITestResult result) {
         String pageName = this.getClass().getSimpleName().replace("Test", "");
         try {
-            if (result.getStatus() == ITestResult.FAILURE) {
-                if (drive != null) {
+            if (result.getStatus() == ITestResult.FAILURE && ConfigsData.SCREENSHOT_ENABLED
+                    && ConfigsData.SCREENSHOT_ON_FAILURE ) {
+                if (driver != null) {
                     CaptureHelpers.takeScreenshot(
                             driver,
                             result.getName(),
@@ -48,15 +57,19 @@ public class BaseTest {
                             "📸 Đã chụp ảnh vị trí lỗi tại trang: "
                                     + pageName
                     );
-                }
-                if (result.getMethod().getRetryAnalyzer(result) != null) {
-                    VideoRecorder.stopAndKeepVideo();
-                    System.out.println("🎥 Đã lưu video tái hiện bug.");
+                }}
+            if (ConfigsData.VIDEO_ENABLED) {
+                if (result.getStatus() == ITestResult.FAILURE
+                        && ConfigsData.VIDEO_ON_FAILURE) {
+                    if (result.getMethod().getRetryAnalyzer(result) != null) {
+                       VideoRecorder.stopAndKeepVideo();
+                       System.out.println("🎥 Đã lưu video tái hiện bug.");
+                    } else {
+                       VideoRecorder.stopAndDeleteVideo();
+                    }
                 } else {
-                    VideoRecorder.stopAndDeleteVideo();
+                   VideoRecorder.stopAndDeleteVideo();
                 }
-            } else {
-              VideoRecorder.stopAndDeleteVideo();
             }
         } finally {
             DriverManager.quitDriver();
