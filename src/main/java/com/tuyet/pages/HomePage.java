@@ -1,9 +1,6 @@
 package com.tuyet.pages;
 
-import java.net.HttpURLConnection;
-import java.net.URI;
-import java.time.Duration;
-
+import com.tuyet.utils.LinkValidator;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -22,8 +19,6 @@ public class HomePage extends BasePage {
     private static final By LINK_GITHUB = By.xpath("//a[contains(@href, 'github.com')]");
     private static final By LINK_FACEBOOK = By.xpath("//a[contains(@href, 'facebook.com')]");
     private static final By LINK_TIKTOK = By.xpath("//a[contains(@href, 'tiktok.com')]");
-
-    private static final int HTTP_TIMEOUT_MS = 5000;
 
     public HomePage(WebDriver driver) {
         super(driver);
@@ -91,24 +86,13 @@ public class HomePage extends BasePage {
     }
 
     public boolean isThemeChanged(String previousColor) {
-        new WebDriverWait(driver, Duration.ofSeconds(5))
-                .until(d -> !getBackgroundColor().replaceAll("\\s+", "")
+        wait.until(d -> !getBackgroundColor().replaceAll("\\s+", "")
                         .equalsIgnoreCase(previousColor.replaceAll("\\s+", "")));
         return true;
     }
 
     public int verifyLinkStatus(String url) {
-        try {
-            HttpURLConnection connection = (HttpURLConnection) URI.create(url).toURL().openConnection();
-            connection.setRequestMethod("GET");
-            connection.setConnectTimeout(HTTP_TIMEOUT_MS);
-            connection.connect();
-            int statusCode = connection.getResponseCode();
-            connection.disconnect();
-            return statusCode;
-        } catch (Exception e) {
-            return 404;
-        }
+        return LinkValidator.getStatusCode(url);
     }
 
     public String getBgColor() {
