@@ -96,7 +96,7 @@ Framework_Automation_Portfolio2026/
 
 ### 1. Clone Repository
 ```bash
-git clone https://github.com/yourusername/Framework_Automation_Portfolio2026.git
+git clone https://github.com/TuyetLe14/Framework_Automation_Portfolio2026
 cd Framework_Automation_Portfolio2026
 ```
 
@@ -304,7 +304,7 @@ mvn clean test -Dheadless=true
 ### Manual Test Run Badge
 Add to README:
 ```markdown
-![Test Status](https://github.com/yourusername/repo/actions/workflows/test-automation.yml/badge.svg)
+![Test Status](https://github.com/TuyetLe14/repo/actions/workflows/test-automation.yml/badge.svg)
 ```
 
 ## 🔍 Troubleshooting
@@ -395,11 +395,9 @@ This project is licensed under the MIT License - see LICENSE file for details.
 
 ## 👨‍💻 Author
 
-**Lê Huỳnh Anh Tuyết**  
-- Portfolio: [Your Portfolio Website]
-- GitHub: [Your GitHub Profile]
-- Email: your-email@example.com
-
+**Tuyết**  
+- Portfolio: https://portfolio-2026.tgdd-ld9941.workers.dev/
+- GitHub: https://github.com/TuyetLe14
 ---
 
 **Last Updated**: August 14, 2026  
