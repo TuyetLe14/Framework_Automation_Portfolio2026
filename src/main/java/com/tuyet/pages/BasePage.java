@@ -1,5 +1,7 @@
 package com.tuyet.pages;
 
+import com.tuyet.constants.ConfigsData;
+import com.tuyet.utils.HighlightHelper;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
@@ -15,13 +17,17 @@ public class BasePage {
 
     public BasePage(WebDriver driver) {
         this.driver = driver;
-        this.wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        this.wait = new WebDriverWait(
+                    driver,
+                    Duration.ofSeconds(ConfigsData.TIMEOUT_EXPLICIT)
+        );
         PageFactory.initElements(driver, this);
     }
 
     public void clickElement(By locator) {
         WebElement el = wait.until(ExpectedConditions.elementToBeClickable(locator));
-        scrollAndHighlight(el);
+        scrollToElement(el);
+        HighlightHelper.highlightElement(driver, el);
         try {
             el.click();
         } catch (Exception e) {
@@ -31,13 +37,15 @@ public class BasePage {
 
     public String getTextElement(By locator) {
         WebElement el = wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
-        scrollAndHighlight(el);
+        scrollToElement(el);
+        HighlightHelper.highlightElement(driver, el);
         return el.getText().trim();
     }
 
     protected void sendKeys(By locator, String text) {
         WebElement el = wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
-        scrollAndHighlight(el);
+        scrollToElement(el);
+        HighlightHelper.highlightElement(driver, el);
         el.clear();
         el.sendKeys(text);
     }
@@ -54,11 +62,10 @@ public class BasePage {
         }
     }
 
-    private void scrollAndHighlight(WebElement el) {
-        try {
-            ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView({block: 'center'});", el);
-            ((JavascriptExecutor) driver).executeScript("arguments[0].style.border='3px solid #ec4899';", el);
-        } catch (Exception e) {
-        }
+    private void scrollToElement(WebElement element) {
+       ((JavascriptExecutor) driver).executeScript(
+            "arguments[0].scrollIntoView({block: 'center'});",
+            element
+       );
     }
 }
