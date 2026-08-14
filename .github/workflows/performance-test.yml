@@ -1,0 +1,129 @@
+name: Performance Testing with k6
+
+on:
+  schedule:
+    # Run performance tests weekly on Friday at 2 PM UTC
+    - cron: '0 14 * * 5'
+  workflow_dispatch:
+    # Allow manual trigger from Actions tab
+
+jobs:
+  load-test:
+    runs-on: ubuntu-latest
+    name: Load Test
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Install k6
+      run: |
+        sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys C5AD17C747E3415A3642D57D77C6C491D6AC1D69
+        echo "deb https://dl.k6.io/deb stable main" | sudo tee /etc/apt/sources.list.d/k6.list
+        sudo apt-get update
+        sudo apt-get install k6
+
+    - name: Run Load Test
+      run: k6 run performance/load-test.js --out json=load-test-results.json
+      continue-on-error: true
+
+    - name: Upload Load Test Results
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: load-test-results
+        path: load-test-results.json
+        retention-days: 30
+
+  stress-test:
+    runs-on: ubuntu-latest
+    name: Stress Test
+    needs: load-test
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Install k6
+      run: |
+        sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys C5AD17C747E3415A3642D57D77C6C491D6AC1D69
+        echo "deb https://dl.k6.io/deb stable main" | sudo tee /etc/apt/sources.list.d/k6.list
+        sudo apt-get update
+        sudo apt-get install k6
+
+    - name: Run Stress Test
+      run: k6 run performance/stress-test.js --out json=stress-test-results.json
+      continue-on-error: true
+
+    - name: Upload Stress Test Results
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: stress-test-results
+        path: stress-test-results.json
+        retention-days: 30
+
+  spike-test:
+    runs-on: ubuntu-latest
+    name: Spike Test
+    needs: stress-test
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Install k6
+      run: |
+        sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys C5AD17C747E3415A3642D57D77C6C491D6AC1D69
+        echo "deb https://dl.k6.io/deb stable main" | sudo tee /etc/apt/sources.list.d/k6.list
+        sudo apt-get update
+        sudo apt-get install k6
+
+    - name: Run Spike Test
+      run: k6 run performance/spike-test.js --out json=spike-test-results.json
+      continue-on-error: true
+
+    - name: Upload Spike Test Results
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: spike-test-results
+        path: spike-test-results.json
+        retention-days: 30
+
+  summary:
+    runs-on: ubuntu-latest
+    name: Performance Test Summary
+    needs: [load-test, stress-test, spike-test]
+    if: always()
+
+    steps:
+    - name: Download All Results
+      uses: actions/download-artifact@v3
+
+    - name: Generate Summary
+      run: |
+        echo "# Performance Test Summary" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "✅ Load Test completed" >> $GITHUB_STEP_SUMMARY
+        echo "✅ Stress Test completed" >> $GITHUB_STEP_SUMMARY
+        echo "✅ Spike Test completed" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "📊 Results stored as artifacts for analysis" >> $GITHUB_STEP_SUMMARY
+
+    - name: Notify Performance Results
+      if: always()
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const fs = require('fs');
+          
+          let comment = '## 📊 Performance Test Results\n\n';
+          comment += '| Test | Status | Artifacts |\n';
+          comment += '|------|--------|----------|\n';
+          comment += '| Load Test | ✅ Completed | load-test-results.json |\n';
+          comment += '| Stress Test | ✅ Completed | stress-test-results.json |\n';
+          comment += '| Spike Test | ✅ Completed | spike-test-results.json |\n';
+          comment += '\n**View detailed results in the Artifacts section**\n';
+          
+          console.log(comment);

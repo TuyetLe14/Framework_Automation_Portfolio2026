@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="Automation Framework - Parallel Tests" parallel="methods" thread-count="3">
+    <test name="Parallel Test Execution">
+        <classes>
+            <class name="com.tuyet.tests.HomeTest"/>
+            <class name="com.tuyet.tests.AboutTest"/>
+            <class name="com.tuyet.tests.ThemeSyncTest"/>
+        </classes>
+    </test>
+</suite>
