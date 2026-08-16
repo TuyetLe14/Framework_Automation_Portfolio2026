@@ -1,406 +1,697 @@
-# Test Automation Framework - Portfolio
+# 🚀 Framework Automation Portfolio 2026
 
-Professional test automation framework built with Selenium WebDriver, TestNG, and Java 21 LTS for web application testing.
+A Java-based web UI test automation framework built with **Selenium WebDriver, TestNG, Maven, and Java 21**.
 
-## 📋 Table of Contents
-- [Features](#features)
-- [Requirements](#requirements)
-- [Project Structure](#project-structure)
-- [Setup & Installation](#setup--installation)
-- [Running Tests](#running-tests)
-- [Configuration](#configuration)
-- [Test Reports](#test-reports)
-- [CI/CD Integration](#cicd-integration)
-- [Contributing](#contributing)
+This project is designed as a QA Automation portfolio project to demonstrate practical experience in UI automation, framework design, reusable utilities, test reporting, parallel execution, CI/CD, and performance testing.
 
-## ✨ Features
+---
 
-✅ **Modern Stack**
-- Java 21 LTS (Long-Term Support until 2029)
-- Selenium WebDriver 4.18.1
-- TestNG 7.10.2 for test execution
-- Maven 3.9.16+ for build automation
+## 📌 Project Overview
 
-✅ **Advanced Capabilities**
-- Page Object Model (POM) design pattern
-- Screenshot capture on test failure
-- Video recording for failed tests
-- Automatic retry mechanism for flaky tests
-- ExtentReports for HTML test reports
-- SLF4J logging integration
-- Excel test data support (Apache POI)
-- **Performance Testing with k6** (Load, Stress, Spike testing)
+The framework follows a layered automation design:
 
-✅ **Professional Practices**
-- CI/CD ready (GitHub Actions) with automated test execution
-- Performance testing pipeline (weekly scheduled runs)
-- Externalized configuration (application.properties)
-- Comprehensive logging
-- Clean code architecture
-- Git version control
-- Production-ready documentation (README, CONTRIBUTING, CHANGELOG)
-
-## 📦 Requirements
-
-- **Java**: OpenJDK 21 or later
-- **Maven**: 3.9.0 or later
-- **ChromeDriver**: Auto-managed by WebDriverManager (if integrated)
-- **Browser**: Chrome/Chromium (for running tests)
-- **Git**: For version control
-
-## 🏗️ Project Structure
-
+```text
+TestNG Tests
+     │
+     ▼
+  BaseTest
+     │
+     ▼
+ Page Objects
+     │
+     ▼
+Selenium WebDriver
+     │
+     ▼
+Web Application
+     │
+     ├── Screenshot
+     ├── Video Recording
+     ├── Retry
+     └── Logging
+             │
+             ▼
+       Test Reporting
 ```
+
+The project also contains a separate **k6 performance-testing suite** and GitHub Actions workflows for automated execution.
+
+---
+
+## 🛠️ Tech Stack
+
+| Technology | Purpose |
+|---|---|
+| Java 21 | Programming language |
+| Selenium WebDriver | Web UI automation |
+| TestNG | Test execution and test suites |
+| Maven | Build and dependency management |
+| ExtentReports | Test reporting |
+| SLF4J | Logging |
+| Apache POI | Excel/test-data handling |
+| Monte Media | Video recording |
+| GitHub Actions | CI/CD |
+| k6 | Performance testing |
+
+---
+
+# ✨ Main Features
+
+## Web UI Automation
+
+- Selenium WebDriver
+- TestNG
+- Page Object Model (POM)
+- Reusable `BasePage`
+- Reusable `BaseTest`
+- Browser configuration
+- Explicit wait support
+- TestNG XML suites
+- Parallel test execution
+
+## Failure Diagnostics
+
+- Screenshot capture
+- Video recording
+- Retry mechanism
+- Element highlighting
+- Link validation
+- Logging
+- ExtentReports
+
+## Test Data & Configuration
+
+- Externalized test configuration
+- `application.properties`
+- Apache POI for Excel-based test data
+- Configurable browser and execution settings
+
+## CI/CD
+
+- GitHub Actions
+- Maven compilation
+- Automated test execution
+- Test report artifacts
+- Test result publishing
+- Scheduled test execution
+- Pull-request test execution
+
+## Performance Testing
+
+- k6 Load Test
+- k6 Stress Test
+- k6 Spike Test
+- JSON performance result artifacts
+- Scheduled/manual performance workflow
+
+---
+
+# 📁 Project Structure
+
+```text
 Framework_Automation_Portfolio2026/
+│
+├── .github/
+│   └── workflows/
+│       ├── test-automation.yml
+│       └── performance-test.yml
+│
+├── performance/
+│   ├── load-test.js
+│   ├── stress-test.js
+│   ├── spike-test.js
+│   ├── run-all-tests.sh
+│   └── run-all-tests.bat
+│
 ├── src/
-│   ├── main/java/com/tuyet/
-│   │   ├── base/
-│   │   │   └── BaseTest.java              # Base test class with setup/teardown
-│   │   ├── constants/
-│   │   │   └── ConfigsData.java           # Configuration constants
-│   │   ├── pages/
-│   │   │   ├── BasePage.java              # Base POM class with common methods
-│   │   │   ├── HomePage.java              # Home page object
-│   │   │   └── AboutPage.java             # About page object
-│   │   └── utils/
-│   │       ├── CaptureHelpers.java        # Screenshot utility
-│   │       ├── HighlightHelper.java       # Element highlight utility
-│   │       ├── LinkValidator.java         # Link validation utility
-│   │       ├── RetryListener.java         # Retry logic for failed tests
-│   │       └── VideoRecorder.java         # Video recording utility
+│   ├── main/
+│   │   └── java/
+│   │       └── com/
+│   │           └── tuyet/
+│   │               ├── base/
+│   │               ├── constants/
+│   │               ├── pages/
+│   │               └── utils/
 │   │
-│   └── test/java/com/tuyet/
-│       ├── base/
-│       │   └── BaseTest.java              # Test base class
-│       ├── listeners/
-│       │   └── ExcelListener.java         # Test listener for Excel reporting
-│       └── tests/
-│           ├── HomeTest.java              # Home page tests
-│           ├── AboutTest.java             # About page tests
-│           ├── ThemeSyncTest.java         # Theme synchronization tests
-│           └── OpenWeb.java               # Basic web opening tests
+│   └── test/
+│       ├── java/
+│       │   └── com/
+│       │       └── tuyet/
+│       │           ├── base/
+│       │           ├── listeners/
+│       │           └── tests/
+│       │
+│       └── resources/
+│           └── application.properties
 │
-├── src/test/resources/
-│   └── application.properties              # Test configuration
-│
-├── pom.xml                                 # Maven configuration
-├── testng.xml                              # TestNG suite configuration
-├── README.md                               # This file
-└── Test_Reports/                           # Generated test reports
-    └── {timestamp}/
-        ├── Screenshots/                    # Failed test screenshots
-        └── Videos/                         # Recorded videos
+├── pom.xml
+├── testng.xml
+├── testng-parallel.xml
+└── README.md
 ```
 
-## 🔧 Setup & Installation
+---
 
-### 1. Clone Repository
+# 🧩 Framework Architecture
+
+## Base Layer
+
+The base layer contains common framework and test lifecycle functionality.
+
+Responsibilities include:
+
+- WebDriver setup
+- Test setup and teardown
+- Common test configuration
+- Shared test behavior
+
+## Page Object Layer
+
+Page Objects separate UI locators and page interactions from test scenarios.
+
+Example:
+
+```text
+pages/
+├── BasePage.java
+├── HomePage.java
+└── AboutPage.java
+```
+
+This approach helps:
+
+- Reduce duplicated Selenium code
+- Improve maintainability
+- Keep tests readable
+- Centralize page-specific actions
+
+## Utility Layer
+
+Reusable utilities are located under:
+
+```text
+src/main/java/com/tuyet/utils/
+```
+
+The project contains utilities for:
+
+- Screenshot capture
+- Element highlighting
+- Link validation
+- Retry handling
+- Video recording
+
+## Test Layer
+
+Test classes are separated from framework implementation:
+
+```text
+src/test/java/com/tuyet/
+├── base/
+├── listeners/
+└── tests/
+```
+
+This keeps test scenarios separate from reusable framework components.
+
+---
+
+# 🔁 Retry Mechanism
+
+The framework includes retry support for failed tests.
+
+Conceptually:
+
+```text
+Test
+ │
+ ├── PASS ─────────────► Continue
+ │
+ └── FAIL
+      │
+      ▼
+    Retry
+      │
+      ├── PASS ────────► Continue
+      │
+      └── FAIL ────────► Report Failure
+```
+
+Retry is intended to help diagnose intermittent failures and should not be used to hide genuine application defects.
+
+---
+
+# 📸 Screenshot & Failure Evidence
+
+The framework includes screenshot support to provide visual evidence when investigating test failures.
+
+Additional diagnostic information can include:
+
+- Screenshot
+- Video recording
+- Logs
+- Test reports
+
+This helps reduce the time required to reproduce and investigate failures.
+
+---
+
+# 🎥 Video Recording
+
+The project includes video-recording support through the Monte Media library.
+
+Video evidence can be used together with screenshots and logs to understand the sequence of actions that occurred during test execution.
+
+The recorder creates timestamped video files in the configured test-report directory.
+
+---
+
+# 📊 Reporting
+
+The framework uses **ExtentReports** for test reporting.
+
+Test execution can produce:
+
+- Test status
+- Execution information
+- Failure information
+- Screenshots
+- Logs
+- Video evidence
+
+Maven Surefire reports are also generated during test execution and can be consumed by CI/CD tooling.
+
+---
+
+# ⚡ Parallel Test Execution
+
+The project includes:
+
+```text
+testng.xml
+testng-parallel.xml
+```
+
+The parallel suite is configured for concurrent test execution.
+
+Example:
+
+```xml
+<suite
+    name="Parallel Test Suite"
+    parallel="methods"
+    thread-count="3">
+```
+
+Run the parallel suite with:
+
 ```bash
-git clone https://github.com/TuyetLe14/Framework_Automation_Portfolio2026
+mvn clean test -DsuiteXmlFile=testng-parallel.xml
+```
+
+Parallel execution can reduce total execution time when tests are independent and properly isolated.
+
+---
+
+# ⚙️ Configuration
+
+Test configuration is maintained in:
+
+```text
+src/test/resources/application.properties
+```
+
+Example configuration:
+
+```properties
+app.url=https://example.com
+browser=chrome
+headless=false
+window.maximize=true
+implicit.wait=10
+explicit.wait=10
+```
+
+Update environment-specific values before running the tests.
+
+Sensitive information such as passwords, tokens, API keys, and credentials should not be committed to the repository.
+
+---
+
+# 🧪 Running UI Tests
+
+## Prerequisites
+
+Install:
+
+- Java 21
+- Maven
+- Git
+- Google Chrome or a compatible Chromium-based browser
+
+Verify Java:
+
+```bash
+java -version
+```
+
+Verify Maven:
+
+```bash
+mvn -version
+```
+
+---
+
+## Clone the Repository
+
+```bash
+git clone https://github.com/TuyetLe14/Framework_Automation_Portfolio2026.git
+```
+
+```bash
 cd Framework_Automation_Portfolio2026
 ```
 
-### 2. Install Java 21
-Download and install from [Eclipse Adoptium](https://adoptium.net/) or [Amazon Corretto](https://aws.amazon.com/corretto/):
+---
+
+## Compile
 
 ```bash
-# Verify installation
-java -version
-# Expected: openjdk version "21.x.x"
+mvn clean compile
 ```
 
-### 3. Install Maven
-```bash
-# Download from https://maven.apache.org/
-# Add MAVEN_HOME to environment variables
+---
 
-mvn -version
-# Expected: Apache Maven 3.9.x
-```
+## Run All Tests
 
-### 4. Install Dependencies
-```bash
-mvn clean install
-```
-
-## ▶️ Running Tests
-
-### Run All Tests
 ```bash
 mvn clean test
 ```
 
-### Run Specific Test Class
-```bash
-mvn clean test -Dtest=HomeTest
-```
-
-### Run Specific Test Method
-```bash
-mvn clean test -Dtest=HomeTest#testBasicInfo
-```
-
-### Run with TestNG XML Suite
-```bash
-mvn clean test -Dsuite=testng.xml
-```
-
-### Run Tests with Retry
-```bash
-mvn clean test -DisRetry=true
-# Captures video and detailed logs for failed tests
-```
-
-### Run Tests in Parallel (Optional - requires testng-parallel.xml)
-```bash
-mvn clean test -Dsuite=testng-parallel.xml
-```
-
-## 🚀 Performance Testing with k6
-
-### Overview
-This framework includes **k6** for performance and load testing. Test your application's performance under different load scenarios.
-
-### Quick Start
-
-#### 1. Install k6
-```bash
-# macOS
-brew install k6
-
-# Linux (Debian/Ubuntu)
-sudo apt-get install k6
-
-# Windows (Chocolatey)
-choco install k6
-
-# Or from: https://github.com/grafana/k6/releases
-```
-
-#### 2. Run Performance Tests
-```bash
-# Load Test (5 concurrent users, 30 seconds)
-k6 run performance/load-test.js
-
-# Stress Test (ramp up to 50 users)
-k6 run performance/stress-test.js
-
-# Spike Test (sudden 100 user spike)
-k6 run performance/spike-test.js
-
-# Run All Tests
-./performance/run-all-tests.sh          # Linux/macOS
-performance\run-all-tests.bat           # Windows
-```
-
-#### 3. View Results
-```bash
-# Results are saved to: performance/results/
-ls -la performance/results/
-```
-
-### Performance Test Types
-
-| Test | Purpose | Scenario |
-|------|---------|----------|
-| **Load Test** | Verify app behavior under normal load | 5 users, 30 seconds |
-| **Stress Test** | Find breaking point | Ramp to 50 users over 14 minutes |
-| **Spike Test** | Test sudden traffic surge | 100 users spike for 10 seconds |
-
-### Thresholds & Metrics
-Each test includes performance thresholds:
-- ✅ 95% of requests < 500ms (load) / 1000ms (stress)
-- ✅ Less than 10% failed requests
-- ✅ Application stability check
-
-**Learn more**: [performance/README.md](performance/README.md)
-
-## ⚙️ Configuration
-
-### application.properties
-Create `src/test/resources/application.properties`:
-
-```properties
-# Application URL
-app.url=https://example.com
-
-# Browser Configuration
-browser=chrome
-headless=false
-window.maximize=true
-
-# Timeouts (seconds)
-implicit.wait=10
-explicit.wait=10
-page.load.timeout=60
-
-# Screenshots & Videos
-screenshot.on.failure=true
-video.on.failure=true
-video.record.all=false
-
-# Logging
-log.level=INFO
-
-# Report Path
-report.path=Test_Reports
-```
-
-### Environment-Specific Configuration
-Create multiple property files:
-- `application-dev.properties`
-- `application-staging.properties`
-- `application-prod.properties`
-
-Use with:
-```bash
-mvn clean test -Dspring.profiles.active=dev
-```
-
-## 📊 Test Reports
-
-### ExtentReports
-After test execution, open the HTML report:
-```
-Test_Reports/{timestamp}/index.html
-```
-
-Features:
-- Test execution timeline
-- Pass/Fail/Skip statistics
-- Screenshot attachments for failed tests
-- Video attachments for failed tests
-- Detailed log information
-
-### Screenshots
-Failed test screenshots are stored in:
-```
-Test_Reports/{timestamp}/Screenshots/
-```
-
-### Video Recordings
-Failed test videos are stored in:
-```
-Test_Reports/{timestamp}/Videos/
-```
-
-## 🚀 CI/CD Integration
-
-### GitHub Actions Workflow
-Tests run automatically on:
-- Push to main branch
-- Pull requests
-
-Workflow file: `.github/workflows/test-automation.yml`
-
-View results: GitHub Actions tab in repository
-
-### Running Locally with Same Configuration
-```bash
-# Simulate CI environment (headless mode)
-mvn clean test -Dheadless=true
-```
-
-### Manual Test Run Badge
-Add to README:
-```markdown
-![Test Status](https://github.com/TuyetLe14/repo/actions/workflows/test-automation.yml/badge.svg)
-```
-
-## 🔍 Troubleshooting
-
-### Common Issues
-
-**Issue**: Chrome driver not found
-```bash
-# Solution: Download ChromeDriver matching your Chrome version
-# Or use WebDriverManager (recommended - auto-manages drivers)
-```
-
-**Issue**: Tests timeout on slow network
-```bash
-# Solution: Increase timeouts in application.properties
-implicit.wait=20
-explicit.wait=20
-page.load.timeout=120
-```
-
-**Issue**: "Invalid target release" error
-```bash
-# Solution: Ensure JAVA_HOME points to JDK 21
-export JAVA_HOME=/path/to/jdk-21
-```
-
-## 📝 Writing New Tests
-
-### 1. Create Page Object
-```java
-public class NewPage extends BasePage {
-    private static final By BUTTON_SUBMIT = By.id("submit");
-    
-    public NewPage(WebDriver driver) {
-        super(driver);
-    }
-    
-    public void clickSubmit() {
-        clickElement(BUTTON_SUBMIT);
-    }
-}
-```
-
-### 2. Create Test Class
-```java
-public class NewTest extends BaseTest {
-    @Test
-    public void testNewFeature() {
-        getDriver().get(ConfigsData.URL);
-        NewPage page = new NewPage(getDriver());
-        page.clickSubmit();
-    }
-}
-```
-
-### 3. Add to testng.xml
-```xml
-<test name="New Tests">
-    <classes>
-        <class name="com.tuyet.tests.NewTest" />
-    </classes>
-</test>
-```
-
-## 🤝 Contributing
-
-1. Create feature branch: `git checkout -b feature/your-feature`
-2. Commit changes: `git commit -m 'Add your feature'`
-3. Push to branch: `git push origin feature/your-feature`
-4. Create Pull Request
-
-### Code Style
-- Follow Google Java Style Guide
-- Use meaningful variable names
-- Add JavaDoc for public methods
-- Keep methods focused (Single Responsibility)
-
-## 📚 Resources
-
-- [Selenium Documentation](https://www.selenium.dev/documentation/)
-- [TestNG User Guide](https://testng.org/doc/)
-- [Maven Guide](https://maven.apache.org/guides/)
-- [Java 21 Features](https://www.oracle.com/java/technologies/java-se-21-highlights.html)
-
-## 📄 License
-
-This project is licensed under the MIT License - see LICENSE file for details.
-
-## 👨‍💻 Author
-
-**Tuyết**  
-- Portfolio: https://portfolio-2026.tgdd-ld9941.workers.dev/
-- GitHub: https://github.com/TuyetLe14
 ---
 
-**Last Updated**: August 14, 2026  
-**Java Version**: 21 LTS  
-**Selenium Version**: 4.18.1  
-**TestNG Version**: 7.10.2
+## Run the TestNG Suite
+
+```bash
+mvn clean test -DsuiteXmlFile=testng.xml
+```
+
+---
+
+## Run Parallel Tests
+
+```bash
+mvn clean test -DsuiteXmlFile=testng-parallel.xml
+```
+
+---
+
+# 📈 Performance Testing with k6
+
+Performance tests are located in:
+
+```text
+performance/
+├── load-test.js
+├── stress-test.js
+└── spike-test.js
+```
+
+## Load Test
+
+```bash
+k6 run performance/load-test.js
+```
+
+The load test evaluates application behavior under the configured normal workload.
+
+## Stress Test
+
+```bash
+k6 run performance/stress-test.js
+```
+
+The stress test increases the workload to evaluate system behavior under higher pressure.
+
+## Spike Test
+
+```bash
+k6 run performance/spike-test.js
+```
+
+The spike test evaluates application behavior during a rapid increase in traffic.
+
+---
+
+## Run All Performance Tests
+
+### Linux / macOS
+
+```bash
+./performance/run-all-tests.sh
+```
+
+### Windows
+
+```bat
+performance\run-all-tests.bat
+```
+
+---
+
+## Export k6 Results
+
+Example:
+
+```bash
+k6 run performance/load-test.js --out json=load-test-results.json
+```
+
+The generated JSON file can be uploaded as a GitHub Actions artifact for later analysis.
+
+---
+
+# 🔄 CI/CD with GitHub Actions
+
+The project contains two workflows:
+
+```text
+.github/workflows/
+├── test-automation.yml
+└── performance-test.yml
+```
+
+## Test Automation Workflow
+
+The test workflow supports:
+
+- Push to `main`
+- Push to `develop`
+- Pull requests targeting `main`
+- Pull requests targeting `develop`
+- Scheduled daily execution
+
+Pipeline:
+
+```text
+GitHub Event
+     │
+     ▼
+Checkout Code
+     │
+     ▼
+Setup Java 21
+     │
+     ▼
+Maven Compile
+     │
+     ▼
+Run Tests
+     │
+     ▼
+Upload Test Reports
+     │
+     ▼
+Publish Test Results
+```
+
+The workflow also contains quality-check and notification steps.
+
+## Performance Workflow
+
+The performance workflow supports scheduled and manual execution.
+
+Pipeline:
+
+```text
+Load Test
+    │
+    ▼
+Stress Test
+    │
+    ▼
+Spike Test
+    │
+    ▼
+Upload Results
+```
+
+Performance results are stored as GitHub Actions artifacts.
+
+---
+
+# 📦 Test Reports & Artifacts
+
+The project can produce different types of test evidence:
+
+| Output | Purpose |
+|---|---|
+| Screenshots | Visual failure evidence |
+| Video | Execution evidence |
+| Logs | Debugging information |
+| ExtentReports | Human-readable test report |
+| Surefire XML | CI test-result publishing |
+| k6 JSON | Performance-test results |
+
+When running in GitHub Actions, generated results can be uploaded as workflow artifacts.
+
+---
+
+# 🧠 Test Strategy
+
+The current project focuses on web UI automation and performance testing.
+
+### Functional Testing
+
+Automated browser-based scenarios validate application behavior.
+
+### Regression Testing
+
+Reusable automated scenarios can be executed repeatedly to check existing functionality.
+
+### Failure Diagnostics
+
+Failed tests can provide additional evidence through:
+
+- Screenshots
+- Video
+- Logs
+- Reports
+
+### Parallel Execution
+
+Independent tests can be executed concurrently through TestNG.
+
+### Performance Testing
+
+k6 is used for:
+
+- Load testing
+- Stress testing
+- Spike testing
+
+---
+
+# 🔐 Security & Configuration Guidelines
+
+Do not commit sensitive data into source control.
+
+Avoid storing:
+
+```text
+Passwords
+API Keys
+Access Tokens
+Private Credentials
+```
+
+For CI/CD, sensitive values should be stored using GitHub Secrets or another appropriate secret-management solution.
+
+---
+
+# 🎯 Current Project Scope
+
+The current project demonstrates:
+
+- ✅ Java 21
+- ✅ Selenium WebDriver
+- ✅ TestNG
+- ✅ Maven
+- ✅ Page Object Model
+- ✅ Base test/page architecture
+- ✅ Screenshot capture
+- ✅ Video recording
+- ✅ Retry mechanism
+- ✅ Element highlighting
+- ✅ Link validation
+- ✅ Logging
+- ✅ ExtentReports
+- ✅ Excel/test-data support
+- ✅ Parallel TestNG execution
+- ✅ GitHub Actions CI/CD
+- ✅ k6 Load Testing
+- ✅ k6 Stress Testing
+- ✅ k6 Spike Testing
+
+---
+
+# 🔮 Future Improvements
+
+The following items can be added in future iterations:
+
+- [ ] API automation with REST Assured
+- [ ] Database testing
+- [ ] Cross-browser execution
+- [ ] Selenium Grid
+- [ ] Docker-based execution
+- [ ] SonarQube quality gates
+- [ ] Slack/Teams notifications
+- [ ] More advanced performance dashboards
+- [ ] Expanded test-data management
+
+These are future enhancements and are not presented as currently implemented features.
+
+---
+
+# 📚 What This Project Demonstrates
+
+This project demonstrates an end-to-end QA Automation workflow:
+
+```text
+Framework Design
+       ↓
+Test Development
+       ↓
+UI Automation
+       ↓
+Failure Diagnostics
+       ↓
+Test Reporting
+       ↓
+Parallel Execution
+       ↓
+CI/CD
+       ↓
+Performance Testing
+```
+
+The focus is not only on writing Selenium test cases, but also on building reusable framework components that make automated tests easier to maintain, execute, debug, and integrate into CI/CD.
+
+---
+
+# 👩‍💻 Author
+
+**Tuyet Le**
+
+QA Automation Portfolio Project — 2026
+
+GitHub:
+
+https://github.com/TuyetLe14
+
+---
+
+# 📄 License
+
+This project is created for educational and portfolio purposes.
