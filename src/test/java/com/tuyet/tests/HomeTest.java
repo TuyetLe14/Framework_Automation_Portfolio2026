@@ -30,8 +30,7 @@ public class HomeTest extends BaseTest {
         System.out.println("Page title: " + title);
         System.out.println("Name detected: [" + name + "]");
 
-        Assert.assertFalse(title.trim().isEmpty(),
-            "Title không được trống!");
+        Assert.assertFalse(homePage.getPageTitle().trim().isEmpty());
 
         Assert.assertTrue(
             name.toUpperCase().replaceAll("\\s+", " ")
