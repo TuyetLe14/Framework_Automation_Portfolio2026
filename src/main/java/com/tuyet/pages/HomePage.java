@@ -29,7 +29,9 @@ public class HomePage extends BasePage {
     }
 
     public String getNameText() {
-        return getTextElement(HEADING_NAME).replace("\n", " ");
+        return getTextElement(HEADING_NAME)
+            .replaceAll("\\s+", " ")
+            .trim();
     }
 
     public String getBackgroundColor() {
