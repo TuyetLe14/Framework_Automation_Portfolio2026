@@ -74,7 +74,7 @@ public class VideoRecorder extends ScreenRecorder {
                             QualityKey, 1.0f,
                             KeyFrameIntervalKey, 15 * 60),
                     new Format(MediaTypeKey, MediaType.VIDEO, EncodingKey, "black", FrameRateKey, Rational.valueOf(30)),
-                    null, file, testCaseName);
+                    null, videoDirectory, testCaseName);
 
             CURRENT_RECORDER.set(recorder);
 
