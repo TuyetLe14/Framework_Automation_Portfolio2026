@@ -4,6 +4,10 @@ import org.openqa.selenium.Dimension;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import java.time.Duration;
+import org.openqa.selenium.By;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import com.tuyet.base.BaseTest;
 import com.tuyet.constants.ConfigsData;
 import com.tuyet.pages.HomePage;
@@ -13,17 +17,32 @@ public class HomeTest extends BaseTest {
     @Test(priority = 1, description = "Test 1: Kiểm tra thông tin cơ bản trên trang Home")
     public void testBasicInfo() {
         getDriver().get(ConfigsData.URL);
+
+        WebDriverWait wait = new WebDriverWait(getDriver(), Duration.ofSeconds(15));
+
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.tagName("h1")));
+
         HomePage homePage = new HomePage(getDriver());
 
-        Assert.assertNotNull(homePage.getPageTitle(), "Title không được trống!");
+        String title = homePage.getPageTitle();
+        String name = homePage.getNameText();
 
-        String name = homePage.getNameText()
-        .replaceAll("\\s+", " ")
-        .trim()
-        .toUpperCase();
+        System.out.println("Page title: " + title);
+        System.out.println("Name detected: [" + name + "]");
 
-        Assert.assertTrue(name.contains("LE HUYNH ANH TUYET"),"Lỗi: Tên hiển thị không đúng! Actual: [" + name + "]");
-        Assert.assertTrue(homePage.isPortraitVisible(), "Lỗi: Không load được ảnh chân dung!");
+        Assert.assertFalse(title.trim().isEmpty(),
+            "Title không được trống!");
+
+        Assert.assertTrue(
+            name.toUpperCase().replaceAll("\\s+", " ")
+                    .contains("LE HUYNH ANH TUYET"),
+            "Lỗi: Tên hiển thị không đúng! Actual: [" + name + "]"
+        );
+
+        Assert.assertTrue(
+            homePage.isPortraitVisible(),
+            "Lỗi: Không load được ảnh chân dung!"
+        );
     }
 
     @Test(priority = 2, description = "Test 2: Kiểm tra logic chuyển đổi Theme (Dark/Light)")
