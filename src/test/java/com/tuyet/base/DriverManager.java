@@ -21,17 +21,17 @@ public final class DriverManager {
 
         options.addArguments("--remote-allow-origins=*");
 
-        if ("true".equalsIgnoreCase(
-                System.getProperty("headless", "false"))) {
-
-            options.addArguments("--headless=new");
-            options.addArguments("--window-size=1920,1080");
-
+        boolean headless = Boolean.parseBoolean(
+            System.getProperty("headless", "false")
+        );
+        if (headless) {
+           options.addArguments("--headless=new");
+           options.addArguments("--no-sandbox");
+           options.addArguments("--disable-dev-shm-usage");
+           options.addArguments("--window-size=1920,1080");
         } else {
-
-            options.addArguments("--start-maximized");
+           options.addArguments("--start-maximized");
         }
-
         WebDriver driver = new ChromeDriver(options);
 
         driver.manage().timeouts().implicitlyWait(
