@@ -324,7 +324,7 @@ src/test/resources/application.properties
 Example configuration:
 
 ```properties
-app.url=https://example.com
+app.url=YOUR_APPLICATION_URL
 browser=chrome
 headless=false
 window.maximize=true
