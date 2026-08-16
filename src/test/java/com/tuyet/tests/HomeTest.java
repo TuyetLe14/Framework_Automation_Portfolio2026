@@ -17,7 +17,12 @@ public class HomeTest extends BaseTest {
 
         Assert.assertNotNull(homePage.getPageTitle(), "Title không được trống!");
 
-        Assert.assertTrue(homePage.getNameText().toUpperCase().contains("LE HUYNH ANH TUYET"), "Lỗi: Tên hiển thị không đúng!");
+        String name = homePage.getNameText()
+        .replaceAll("\\s+", " ")
+        .trim()
+        .toUpperCase();
+
+        Assert.assertTrue(name.contains("LE HUYNH ANH TUYET"),"Lỗi: Tên hiển thị không đúng! Actual: [" + name + "]");
         Assert.assertTrue(homePage.isPortraitVisible(), "Lỗi: Không load được ảnh chân dung!");
     }
 
