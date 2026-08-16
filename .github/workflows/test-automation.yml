@@ -41,7 +41,7 @@ jobs:
       run: mvn clean compile -B -V
 
     - name: Run Tests
-      run: mvn clean test -B
+      run: mvn clean test -B -Dheadless=true
 
     - name: Upload Test Reports
       if: always()
