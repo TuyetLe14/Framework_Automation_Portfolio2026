@@ -8,7 +8,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class HomePage extends BasePage {
 
-    private static final By HEADING_NAME = By.xpath("//h1");
+    private static final By HEADING_NAME = By.xpath("//h1[.//span[contains(normalize-space(.), 'LE HUYNH')]]");
     private static final By BUTTON_THEME_SWITCH = By.xpath("//span[text()='SWITCH']/preceding-sibling::div");
     private static final By CONTAINER_MAIN = By.xpath("//div[contains(@class, 'min-h-screen')]");
     private static final By IMG_PORTRAIT = By.xpath("//img[@alt='Portrait']");
@@ -29,9 +29,9 @@ public class HomePage extends BasePage {
     }
 
     public String getNameText() {
-        return getTextElement(HEADING_NAME)
-            .replaceAll("\\s+", " ")
-            .trim();
+       return wait.until(
+            ExpectedConditions.visibilityOfElementLocated(HEADING_NAME)
+        ).getText().replaceAll("\\s+", " ").trim();
     }
 
     public String getBackgroundColor() {
