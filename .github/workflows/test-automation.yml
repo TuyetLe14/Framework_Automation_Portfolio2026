@@ -8,7 +8,11 @@ on:
   schedule:
     # Run tests daily at 2 AM UTC
     - cron: '0 2 * * *'
-
+permissions:
+  contents: read
+  checks: write
+  pull-requests: write
+  
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -38,7 +42,6 @@ jobs:
 
     - name: Run Tests
       run: mvn clean test -B
-      continue-on-error: true
 
     - name: Upload Test Reports
       if: always()
