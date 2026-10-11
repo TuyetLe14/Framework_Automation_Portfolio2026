@@ -539,9 +539,8 @@ Upload Test Reports
      ▼
 Publish Test Results
 ```
-
-The workflow also contains quality-check and notification steps.
-
+- Cross-browser matrix: Chrome and Firefox run in parallel
+  
 ## Performance Workflow
 
 The performance workflow supports scheduled and manual execution.
