@@ -515,7 +515,8 @@ The test workflow supports:
 - Pull requests targeting `main`
 - Pull requests targeting `develop`
 - Scheduled daily execution
-
+- Cross-browser matrix: Chrome and Firefox run in parallel
+  
 Pipeline:
 
 ```text
@@ -539,7 +540,6 @@ Upload Test Reports
      ▼
 Publish Test Results
 ```
-- Cross-browser matrix: Chrome and Firefox run in parallel
   
 ## Performance Workflow
 
