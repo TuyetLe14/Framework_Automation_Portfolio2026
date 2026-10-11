@@ -1,5 +1,9 @@
 package com.tuyet.base;
 
+import org.openqa.selenium.edge.EdgeDriver;
+import org.openqa.selenium.edge.EdgeOptions;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -16,7 +20,6 @@ public final class DriverManager {
     }
 
     public static void createDriver() {
-        ChromeOptions options = new ChromeOptions();
         String browser = System.getProperty("browser", "chrome").toLowerCase();
         boolean headless = Boolean.parseBoolean(
                 System.getProperty("headless", "false"));
