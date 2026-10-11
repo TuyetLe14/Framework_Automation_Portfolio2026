@@ -1,4 +1,4 @@
-# 🚀 Framework Automation Portfolio 2026
+# Framework Automation Portfolio 2026
 
 A Java-based web UI test automation framework built with **Selenium WebDriver, TestNG, Maven, and Java 21**.
 
@@ -6,7 +6,7 @@ This project is designed as a QA Automation portfolio project to demonstrate pra
 
 ---
 
-## 📌 Project Overview
+## Project Overview
 
 The framework follows a layered automation design:
 
@@ -38,7 +38,7 @@ The project also contains a separate **k6 performance-testing suite** and GitHub
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 | Technology | Purpose |
 |---|---|
@@ -55,7 +55,7 @@ The project also contains a separate **k6 performance-testing suite** and GitHub
 
 ---
 
-# ✨ Main Features
+# Main Features
 
 ## Web UI Automation
 
@@ -106,7 +106,7 @@ The project also contains a separate **k6 performance-testing suite** and GitHub
 
 ---
 
-# 📁 Project Structure
+# Project Structure
 
 ```text
 Framework_Automation_Portfolio2026/
@@ -152,7 +152,7 @@ Framework_Automation_Portfolio2026/
 
 ---
 
-# 🧩 Framework Architecture
+# Framework Architecture
 
 ## Base Layer
 
@@ -216,32 +216,38 @@ This keeps test scenarios separate from reusable framework components.
 
 ---
 
-# 🔁 Retry Mechanism
+# Retry Mechanism
+Failed tests are retried **only when the failure looks like a flaky or environment issue**. Assertion failures are never retried, so real defects are not hidden.
 
-The framework includes retry support for failed tests.
+| Rule | Value |
+| ---- | ----- |
+| Max retries | 1 |
+| Retried exceptions | `StaleElementReferenceException`, `TimeoutException`, `NoSuchElementException`, `WebDriverException` |
+| Not retried | `AssertionError` (genuine functional failure) |
+| Logging | Each retry is logged as a warning with the test name and exception type |
 
-Conceptually:
-
-```text
+```
 Test
  │
  ├── PASS ─────────────► Continue
  │
  └── FAIL
       │
-      ▼
-    Retry
+      ├── Assertion failure ─────►Report failure (no retry)
       │
-      ├── PASS ────────► Continue
-      │
-      └── FAIL ────────► Report Failure
+      └── Flaky exception
+            │
+            ▼
+          Retry once
+            │
+            ├── PASS ──────► Continue
+            └── FAIL ──────► Report failure
 ```
-
-Retry is intended to help diagnose intermittent failures and should not be used to hide genuine application defects.
+Implementation: `src/main/java/com/tuyet/utils/RetryListener.java`
 
 ---
 
-# 📸 Screenshot & Failure Evidence
+# Screenshot & Failure Evidence
 
 The framework includes screenshot support to provide visual evidence when investigating test failures.
 
