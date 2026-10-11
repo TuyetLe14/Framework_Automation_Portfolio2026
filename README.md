@@ -1,5 +1,7 @@
 # Framework Automation Portfolio 2026
 
+![CI](https://github.com/TuyetLe14/Framework_Automation_Portfolio2026/actions/workflows/test-automation.yml/badge.svg)
+
 A Java-based web UI test automation framework built with **Selenium WebDriver, TestNG, Maven, and Java 21**.
 
 This project is designed as a QA Automation portfolio project to demonstrate practical experience in UI automation, framework design, reusable utilities, test reporting, parallel execution, CI/CD, and performance testing.
