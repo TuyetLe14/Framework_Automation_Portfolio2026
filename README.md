@@ -262,7 +262,7 @@ This helps reduce the time required to reproduce and investigate failures.
 
 ---
 
-# 🎥 Video Recording
+# Video Recording
 
 The project includes video-recording support through the Monte Media library.
 
@@ -272,7 +272,7 @@ The recorder creates timestamped video files in the configured test-report direc
 
 ---
 
-# 📊 Reporting
+# Reporting
 
 The framework uses **ExtentReports** for test reporting.
 
@@ -289,7 +289,7 @@ Maven Surefire reports are also generated during test execution and can be consu
 
 ---
 
-# ⚡ Parallel Test Execution
+# Parallel Test Execution
 
 The project includes:
 
@@ -320,7 +320,26 @@ Parallel execution can reduce total execution time when tests are independent an
 **WebDriver management implemented with ThreadLocal to ensure thread-safety during parallel execution
 ---
 
-# ⚙️ Configuration
+# Cross-Browser Execution
+The browser is selected at runtime through the `browser` system property, handled in `DriverManager`. If the property is not set, Chrome is used.
+
+| Browser | Command |
+| ------- | ------- |
+| Chrome (default) | `mvn clean test` |
+| Firefox | `mvn clean test -Dbrowser=firefox` |
+| Edge | `mvn clean test -Dbrowser=edge` |
+| Headless | `mvn clean test -Dbrowser=firefox -Dheadless=true` |
+
+Notes:
+
+- Supported values: `chrome`, `firefox`, `edge`. Any other value fails fast with a clear error message.
+- WebDriver is stored in a `ThreadLocal`, so cross-browser runs work together with parallel execution.
+- Selenium Manager downloads the matching browser driver automatically.
+- The target browser must be installed on the machine running the tests.
+
+Implementation: `src/test/java/com/tuyet/base/DriverManager.java`
+
+# Configuration
 
 Test configuration is maintained in:
 
@@ -332,8 +351,6 @@ Example configuration:
 
 ```properties
 app.url=YOUR_APPLICATION_URL
-browser=chrome
-headless=false
 window.maximize=true
 implicit.wait=10
 explicit.wait=10
@@ -345,7 +362,7 @@ Sensitive information such as passwords, tokens, API keys, and credentials shoul
 
 ---
 
-# 🧪 Running UI Tests
+# Running UI Tests
 
 ## Prerequisites
 
@@ -414,7 +431,7 @@ mvn clean test -DsuiteXmlFile=testng-parallel.xml
 
 ---
 
-# 📈 Performance Testing with k6
+# Performance Testing with k6
 
 Performance tests are located in:
 
@@ -548,7 +565,7 @@ Performance results are stored as GitHub Actions artifacts.
 
 ---
 
-# 📦 Test Reports & Artifacts
+# Test Reports & Artifacts
 
 The project can produce different types of test evidence:
 
@@ -565,7 +582,7 @@ When running in GitHub Actions, generated results can be uploaded as workflow ar
 
 ---
 
-# 🧠 Test Strategy
+# Test Strategy
 
 The current project focuses on web UI automation and performance testing.
 
@@ -600,7 +617,7 @@ k6 is used for:
 
 ---
 
-# 🔐 Security & Configuration Guidelines
+# Security & Configuration Guidelines
 
 Do not commit sensitive data into source control.
 
@@ -617,7 +634,7 @@ For CI/CD, sensitive values should be stored using GitHub Secrets or another app
 
 ---
 
-# 🎯 Current Project Scope
+# Current Project Scope
 
 The current project demonstrates:
 
@@ -636,6 +653,7 @@ The current project demonstrates:
 - ✅ ExtentReports
 - ✅ Excel/test-data support
 - ✅ Parallel TestNG execution
+- ✅ Cross-browser execution (Chrome, Firefox, Edge)
 - ✅ GitHub Actions CI/CD
 - ✅ k6 Load Testing
 - ✅ k6 Stress Testing
@@ -649,7 +667,6 @@ The following items can be added in future iterations:
 
 - [ ] API automation with REST Assured
 - [ ] Database testing
-- [ ] Cross-browser execution
 - [ ] Selenium Grid
 - [ ] Docker-based execution
 - [ ] SonarQube quality gates
@@ -661,7 +678,7 @@ These are future enhancements and are not presented as currently implemented fea
 
 ---
 
-# 📚 What This Project Demonstrates
+# What This Project Demonstrates
 
 This project demonstrates an end-to-end QA Automation workflow:
 
