@@ -16,31 +16,51 @@ public final class DriverManager {
     }
 
     public static void createDriver() {
-
         ChromeOptions options = new ChromeOptions();
-
-        options.addArguments("--remote-allow-origins=*");
-
+        String browser = System.getProperty("browser", "chrome").toLowerCase();
         boolean headless = Boolean.parseBoolean(
-            System.getProperty("headless", "false")
-        );
-        if (headless) {
-           options.addArguments("--headless=new");
-           options.addArguments("--no-sandbox");
-           options.addArguments("--disable-dev-shm-usage");
-           options.addArguments("--window-size=1920,1080");
-        } else {
-           options.addArguments("--start-maximized");
+                System.getProperty("headless", "false"));
+
+        WebDriver driver;
+
+        switch (browser) {
+            case "firefox" -> {
+                FirefoxOptions options = new FirefoxOptions();
+                if (headless) {
+                    options.addArguments("-headless");
+                    options.addArguments("--width=1920", "--height=1080");
+                }
+                driver = new FirefoxDriver(options);
+            }
+            case "edge" -> {
+                EdgeOptions options = new EdgeOptions();
+                options.addArguments("--remote-allow-origins=*");
+                if (headless) {
+                    options.addArguments("--headless=new", "--no-sandbox",
+                            "--disable-dev-shm-usage", "--window-size=1920,1080");
+                } else {
+                    options.addArguments("--start-maximized");
+                }
+                driver = new EdgeDriver(options);
+            }
+            case "chrome" -> {
+                ChromeOptions options = new ChromeOptions();
+                options.addArguments("--remote-allow-origins=*");
+                if (headless) {
+                    options.addArguments("--headless=new", "--no-sandbox",
+                            "--disable-dev-shm-usage", "--window-size=1920,1080");
+                } else {
+                    options.addArguments("--start-maximized");
+                }
+                driver = new ChromeDriver(options);
+            }
+            default -> throw new IllegalArgumentException(
+                    "Unsupported browser: " + browser
+                            + ". Use chrome, firefox or edge.");
         }
-        WebDriver driver = new ChromeDriver(options);
 
-        driver.manage().timeouts().implicitlyWait(
-                Duration.ofSeconds(10)
-        );
-
-        driver.manage().timeouts().pageLoadTimeout(
-                Duration.ofSeconds(60)
-        );
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+        driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(60));
 
         DRIVER.set(driver);
     }
