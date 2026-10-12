@@ -5,6 +5,8 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebElement;
 
 public class HomePage extends BasePage {
 
@@ -80,7 +82,14 @@ public class HomePage extends BasePage {
     }
 
     public boolean isPortraitDisplayed() {
-        return isElementPresent(IMG_PORTRAIT);
+        try {
+           WebElement img = wait.until(
+                ExpectedConditions.presenceOfElementLocated(IMG_PORTRAIT));
+           return wait.until(d -> (Boolean) ((JavascriptExecutor) d).executeScript(
+                "return arguments[0].complete && arguments[0].naturalWidth > 0", img));
+        } catch (Exception e) {
+          return false;
+        }
     }
 
     public String getContentFlexDirection() {
@@ -138,5 +147,11 @@ public class HomePage extends BasePage {
 
     public boolean isPortraitVisible() {
         return isPortraitDisplayed();
+    }
+
+    public void waitForBackgroundColor(String expectedColor) {
+        String expected = expectedColor.replaceAll("\\s+", "");
+        wait.until(d -> getBackgroundColor().replaceAll("\\s+", "")
+            .equalsIgnoreCase(expected));
     }
 }
