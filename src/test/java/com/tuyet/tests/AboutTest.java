@@ -4,6 +4,9 @@ import org.openqa.selenium.Dimension;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+import java.time.Duration;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.tuyet.base.BaseTest;
 import com.tuyet.constants.ConfigsData;
@@ -21,7 +24,7 @@ public class AboutTest extends BaseTest {
         homePage = new HomePage(getDriver());
     }
 
-    @Test(priority = 1, description = "Kiểm tra điều hướng đến trang About")
+    @Test(description = "Kiểm tra điều hướng đến trang About")
     public void testNavigationToAbout() {
         getDriver().get(ConfigsData.URL);
         homePage.goToAboutPage();
@@ -30,7 +33,7 @@ public class AboutTest extends BaseTest {
                 "Lỗi: Không điều hướng đúng! URL hiện tại: " + getDriver().getCurrentUrl());
     }
 
-    @Test(priority = 2, description = "Kiểm tra thông tin liên hệ và học vấn")
+    @Test(description = "Kiểm tra thông tin liên hệ và học vấn")
     public void testContactAndEducation() {
         getDriver().get(ConfigsData.URL + "/#/about");
         aboutPage.waitForPageLoaded();
@@ -42,7 +45,7 @@ public class AboutTest extends BaseTest {
         Assert.assertTrue(aboutPage.getGPA().contains(ProfileData.GPA), "GPA không khớp!");
     }
 
-    @Test(priority = 3, description = "Kiểm tra hình ảnh chân dung và giao diện")
+    @Test(description = "Kiểm tra hình ảnh chân dung và giao diện")
     public void testVisualElements() {
         getDriver().get(ConfigsData.URL + "/#/about");
 
@@ -50,7 +53,7 @@ public class AboutTest extends BaseTest {
         Assert.assertTrue(aboutPage.isCrystalBackgroundPresent(), "Không tìm thấy Crystal Background!");
     }
 
-    @Test(priority = 4, description = "Kiểm tra Responsive Layout (Stacked on Mobile)")
+    @Test(description = "Kiểm tra Responsive Layout (Stacked on Mobile)")
     public void testResponsiveLayout() {
         getDriver().get(ConfigsData.URL + "/#/about");
         getDriver().manage().window().setSize(new Dimension(390, 844));
@@ -59,10 +62,49 @@ public class AboutTest extends BaseTest {
         getDriver().manage().window().maximize();
     }
 
-    @Test(priority = 5 , description = "Kiểm tra định vị nghề nghiệp và Animation hiển thị")
+    @Test(description = "Kiểm tra định vị nghề nghiệp và Animation hiển thị")
     public void testProfessionalTagAndAnimation() {
         getDriver().get(ConfigsData.URL + "/#/about");
         Assert.assertEquals(aboutPage.getQABadgeText(), "QA ENGINEER", "Sai định vị nghề nghiệp!");
         Assert.assertTrue(aboutPage.isProfileVisibleAfterAnimation(), "Lỗi: Animation làm ẩn nội dung trang About!");
+    }
+
+    @Test(description = "Kiểm tra chi tiết học vấn và định hướng nghề nghiệp")
+    public void testEducationAndCareerDetails() {
+        getDriver().get(ConfigsData.URL + "/#/about");
+        aboutPage.waitForPageLoaded();
+
+        Assert.assertTrue(aboutPage.getDegree().contains(ProfileData.DEGREE), "Sai xếp loại bằng!");
+        Assert.assertTrue(aboutPage.getMajor().contains(ProfileData.MAJOR), "Sai chuyên ngành!");
+        Assert.assertTrue(aboutPage.getFocusArea().contains(ProfileData.FOCUS_AREA_KEYWORD), "Sai Focus Area!");
+        Assert.assertTrue(aboutPage.getBackground().contains(ProfileData.BACKGROUND_KEYWORD), "Sai Background!");
+        Assert.assertTrue(aboutPage.getAmbition().contains(ProfileData.AMBITION), "Sai Ambition!");
+    }
+
+    @Test(description = "Bấm Back của trình duyệt từ About quay về Home")
+    public void testBrowserBackToHome() {
+        getDriver().get(ConfigsData.URL);
+        homePage.goToAboutPage();
+        Assert.assertTrue(aboutPage.verifyUrlContains("/#/about"), "Không vào được About!");
+
+        getDriver().navigate().back();
+
+        new WebDriverWait(getDriver(), Duration.ofSeconds(10))
+            .until(ExpectedConditions.not(ExpectedConditions.urlContains("about")));
+        Assert.assertTrue(homePage.getNameText().toUpperCase().contains(ProfileData.FULL_NAME),
+            "Lỗi: Back không quay về trang Home!");
+    }
+
+    @Test(description = "Bấm icon Home trên thanh điều hướng từ About")
+    public void testHomeNavLinkFromAbout() {
+        getDriver().get(ConfigsData.URL + "/#/about");
+        aboutPage.waitForPageLoaded();
+
+        aboutPage.goToHome();
+
+        new WebDriverWait(getDriver(), Duration.ofSeconds(10))
+            .until(ExpectedConditions.not(ExpectedConditions.urlContains("about")));
+        Assert.assertTrue(homePage.getNameText().toUpperCase().contains(ProfileData.FULL_NAME),
+            "Lỗi: Icon Home không đưa về trang chủ!");
     }
 }
