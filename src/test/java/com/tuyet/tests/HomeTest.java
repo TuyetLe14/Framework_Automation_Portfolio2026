@@ -15,7 +15,7 @@ import com.tuyet.constants.ProfileData;
 
 public class HomeTest extends BaseTest {
 
-    @Test(priority = 1, description = "Test 1: Kiểm tra thông tin cơ bản trên trang Home")
+    @Test(description = "Test 1: Kiểm tra thông tin cơ bản trên trang Home")
     public void testBasicInfo() {
         getDriver().get(ConfigsData.URL);
 
@@ -45,7 +45,7 @@ public class HomeTest extends BaseTest {
         );
     }
 
-    @Test(priority = 2, description = "Test 2: Kiểm tra logic chuyển đổi Theme (Dark/Light)")
+    @Test(description = "Test 2: Kiểm tra logic chuyển đổi Theme (Dark/Light)")
     public void testThemeSwitching() {
         getDriver().get(ConfigsData.URL);
         HomePage homePage = new HomePage(getDriver());
@@ -61,7 +61,7 @@ public class HomeTest extends BaseTest {
                 "Lỗi: Màu nền không thay đổi sau khi Switch!");
     }
 
-    @Test(priority = 3, description = "Kiểm tra nút Download CV")
+    @Test(description = "Kiểm tra nút Download CV")
     public void testCVDownloadLink() {
         getDriver().get(ConfigsData.URL);
         HomePage homePage = new HomePage(getDriver());
@@ -73,7 +73,7 @@ public class HomeTest extends BaseTest {
         Assert.assertEquals(homePage.verifyLinkStatus(cvHref), 200, "Lỗi: Link CV bị die (404)!");
     }
 
-    @Test(priority = 4, description = "Test 4: Kiểm tra tính đúng đắn của các link mạng xã hội")
+    @Test(description = "Test 4: Kiểm tra tính đúng đắn của các link mạng xã hội")
     public void testSocialLinks() {
         getDriver().get(ConfigsData.URL);
         HomePage homePage = new HomePage(getDriver());
@@ -83,7 +83,7 @@ public class HomeTest extends BaseTest {
         Assert.assertTrue(homePage.getTiktokHref().contains("tiktok.com"));
     }
 
-    @Test(priority = 5, description = "5. Kiểm tra Responsive Layout (Mobile vs Desktop)")
+    @Test(description = "5. Kiểm tra Responsive Layout (Mobile vs Desktop)")
     public void testResponsiveLayout() {
         getDriver().get(ConfigsData.URL);
         HomePage homePage = new HomePage(getDriver());
@@ -100,4 +100,28 @@ public class HomeTest extends BaseTest {
         Assert.assertFalse(homePage.isStackedLayout(),
             "Lỗi: Desktop layout không chuyển về dạng hàng!");
     }
+    @Test(description = "Kiểm tra tiêu đề tab trình duyệt")
+    public void testPageTitle() {
+        getDriver().get(ConfigsData.URL);
+        HomePage homePage = new HomePage(getDriver());
+
+        Assert.assertEquals(homePage.getPageTitle(), ProfileData.PAGE_TITLE,
+            "Lỗi: Tiêu đề trang không đúng!");
+    }
+
+    @Test(description = "Bấm SWITCH hai lần thì quay về theme ban đầu")
+    public void testThemeToggleBothWays() {
+        getDriver().get(ConfigsData.URL);
+        HomePage homePage = new HomePage(getDriver());
+
+        String original = homePage.getBgColor();
+        homePage.toggleTheme();
+        homePage.getBgColorAfterSwitch(original);
+        homePage.toggleTheme();
+        homePage.waitForBackgroundColor(original);
+
+        Assert.assertEquals(homePage.getBgColor().replaceAll("\\s+", ""),
+            original.replaceAll("\\s+", ""),
+            "Lỗi: Bấm SWITCH hai lần mà theme không quay về ban đầu!");
+     }
 }
