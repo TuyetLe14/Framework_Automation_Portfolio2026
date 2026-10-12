@@ -83,8 +83,14 @@ public class HomePage extends BasePage {
         return isElementPresent(IMG_PORTRAIT);
     }
 
+    public String getContentFlexDirection() {
+        return wait.until(
+            ExpectedConditions.visibilityOfElementLocated(CONTAINER_CONTENT_GRID))
+            .getCssValue("flex-direction");
+    }
+
     public boolean isStackedLayout() {
-        return getContentGridClass().contains("flex-col");
+        return "column".equals(getContentFlexDirection());
     }
 
     public boolean isThemeChanged(String previousColor) {
