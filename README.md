@@ -341,6 +341,8 @@ Notes:
 
 Implementation: `src/test/java/com/tuyet/base/DriverManager.java`
 
+CI currently runs Chrome only. Firefox and Edge are supported through -Dbrowser for local runs.
+
 # Configuration
 
 Test configuration is maintained in:
@@ -517,7 +519,7 @@ The test workflow supports:
 - Pull requests targeting `main`
 - Pull requests targeting `develop`
 - Scheduled daily execution
-- Cross-browser matrix: Chrome and Firefox run in parallel
+- Tests run on Chrome (headless) in CI.
   
 Pipeline:
 
