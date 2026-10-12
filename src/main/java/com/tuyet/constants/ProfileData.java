@@ -9,4 +9,10 @@ public final class ProfileData {
     public static final String LOCATION = "Ho Chi Minh, Vietnam";
     public static final String GPA = "8.13";
     public static final String GITHUB_URL = "https://github.com/TuyetLe14";
+    public static final String PAGE_TITLE = "Portfolio of Snow";
+    public static final String DEGREE = "Very Good";
+    public static final String MAJOR = "Information Technology";
+    public static final String FOCUS_AREA_KEYWORD = "Selenium/Java";
+    public static final String BACKGROUND_KEYWORD = "Fullstack Dev";
+    public static final String AMBITION = "Senior SDET";
 }
