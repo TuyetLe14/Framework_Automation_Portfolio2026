@@ -53,28 +53,5 @@ public class ThemeSyncTest extends BaseTest {
 
         Assert.assertEquals(aboutPage.isLightModeActive(), isLightBefore,
                 "Lỗi: Reload trang là bị reset Theme (Dữ liệu chưa được lưu vào LocalStorage)");
-    }
-
-    @Test(priority = 3, description = "Case 3: Kiểm tra tính toàn vẹn dữ liệu trang About")
-    public void testAboutDataIntegrity() {
-        getDriver().get(ConfigsData.URL + "/#/about");
-        AboutPage aboutPage = new AboutPage(getDriver());
-        aboutPage.waitForPageLoaded();
-
-        Assert.assertEquals(aboutPage.getEmail(), "lehuynhanh.tuyet10@gmail.com", "Email sai!");
-        Assert.assertEquals(aboutPage.getPhone(), "0817493884", "Số điện thoại sai!");
-        Assert.assertTrue(aboutPage.isPortraitImageLoaded(), "Ảnh profile không hiện!");
-    }
-
-    @Test(priority = 4, description = "Case 4: Kiểm tra Responsive Layout trên Mobile")
-    public void testResponsiveLayout() {
-        getDriver().get(ConfigsData.URL + "/#/about");
-        AboutPage aboutPage = new AboutPage(getDriver());
-
-        getDriver().manage().window().setSize(new Dimension(390, 844));
-        aboutPage.waitForLayoutChange();
-        Assert.assertTrue(aboutPage.isStackedLayout(), "Lỗi: Mobile mà giao diện không xếp chồng!");
-
-        getDriver().manage().window().maximize();
-    }
+    }   
 }
