@@ -544,6 +544,8 @@ The test workflow supports:
 - Pull requests targeting `develop`
 - Scheduled daily execution
 - Tests run on Chrome (headless) in CI.
+- API tests run as a separate job
+- Database tests run as a separate job
   
 Pipeline:
 
@@ -572,6 +574,24 @@ Publish Test Results
 ### API Test Job
 
 API tests run as a separate job (`api-test`) in the same workflow. The job runs in parallel with the UI tests, does not open a browser, and publishes its own test report and artifact.
+
+# Database Testing
+
+The portfolio site has no database, so these SQL tests run against an **embedded H2 database** with a sample e-commerce schema (customers, products, orders, order items). The database is rebuilt before every test, so tests stay independent and need no external service.
+
+| Area | Verifies |
+| ---- | -------- |
+| Data quality rules (data-driven) | No duplicate emails, no orphan rows, order total equals sum of items, no negative stock |
+| Constraints (data-driven) | UNIQUE, NOT NULL, FOREIGN KEY and CHECK violations are rejected with the right SQLSTATE |
+| Business queries | LEFT JOIN, SUM aggregation, GROUP BY with ORDER BY |
+| Security | Parameterized queries treat input as data (SQL injection attempt) |
+| Transactions | Rollback undoes uncommitted changes |
+
+Run database tests:
+
+```
+mvn clean test -DsuiteXmlFile=testng-db.xml
+```
 
 ## Performance Workflow
 
@@ -690,14 +710,14 @@ The current project demonstrates:
 - ✅ k6 Stress Testing
 - ✅ k6 Spike Testing
 - ✅ API testing with REST Assured
-
+- ✅ Database testing with SQL (H2)
+  
 ---
 
 # 🔮 Future Improvements
 
 The following items can be added in future iterations:
 
-- [ ] Database testing
 - [ ] Selenium Grid
 - [ ] Docker-based execution
 - [ ] SonarQube quality gates
