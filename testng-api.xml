@@ -1,1 +1,9 @@
-
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="API Test Suite">
+    <test name="Posts API">
+        <classes>
+            <class name="com.tuyet.api.PostsApiTest"/>
+        </classes>
+    </test>
+</suite>
