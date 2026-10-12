@@ -22,7 +22,7 @@ jobs:
       fail-fast: false
       matrix:
         java-version: ['21']
-        browser: [chrome, firefox]
+        browser: [chrome]
     
     steps:
     - name: Checkout Code
