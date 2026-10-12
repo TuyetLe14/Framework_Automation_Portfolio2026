@@ -343,6 +343,30 @@ Implementation: `src/test/java/com/tuyet/base/DriverManager.java`
 
 CI currently runs Chrome only. Firefox and Edge are supported through -Dbrowser for local runs.
 
+# API Testing
+
+API tests use **REST Assured** with TestNG against the public JSONPlaceholder API. They run without a browser and as a separate CI job.
+
+| Test | Verifies |
+| ---- | -------- |
+| GET single post | Status 200 and response fields |
+| GET all posts | Status 200 and list size |
+| Filter by userId (data-driven) | Query parameter and response content |
+| GET comments of a post | Nested resource and email format |
+| POST create | Status 201 and echoed data |
+| PUT / PATCH update | Status 200 and updated fields |
+| DELETE | Status 200 |
+| GET non-existing id (data-driven) | Status 404 |
+| Response time | Under the configured timeout |
+
+Run API tests:
+
+```
+mvn clean test -DsuiteXmlFile=testng-api.xml
+```
+
+Configuration: `api.baseurl` and `api.timeout` in `application.properties`. Override the base URL with `-Dapi.baseUri=<url>`.
+
 # Configuration
 
 Test configuration is maintained in:
@@ -544,7 +568,11 @@ Upload Test Reports
      ▼
 Publish Test Results
 ```
-  
+
+### API Test Job
+
+API tests run as a separate job (`api-test`) in the same workflow. The job runs in parallel with the UI tests, does not open a browser, and publishes its own test report and artifact.
+
 ## Performance Workflow
 
 The performance workflow supports scheduled and manual execution.
@@ -661,6 +689,7 @@ The current project demonstrates:
 - ✅ k6 Load Testing
 - ✅ k6 Stress Testing
 - ✅ k6 Spike Testing
+- ✅ API testing with REST Assured
 
 ---
 
@@ -668,7 +697,6 @@ The current project demonstrates:
 
 The following items can be added in future iterations:
 
-- [ ] API automation with REST Assured
 - [ ] Database testing
 - [ ] Selenium Grid
 - [ ] Docker-based execution
