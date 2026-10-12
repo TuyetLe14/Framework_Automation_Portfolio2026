@@ -9,6 +9,7 @@ import com.tuyet.base.BaseTest;
 import com.tuyet.constants.ConfigsData;
 import com.tuyet.pages.AboutPage;
 import com.tuyet.pages.HomePage;
+import com.tuyet.constants.ProfileData;
 
 public class AboutTest extends BaseTest {
     private AboutPage aboutPage;
@@ -34,11 +35,11 @@ public class AboutTest extends BaseTest {
         getDriver().get(ConfigsData.URL + "/#/about");
         aboutPage.waitForPageLoaded();
 
-        Assert.assertEquals(aboutPage.getEmail(), "lehuynhanh.tuyet10@gmail.com");
-        Assert.assertEquals(aboutPage.getPhone(), "0817493884");
-        Assert.assertEquals(aboutPage.getLocation(), "Ho Chi Minh, Vietnam");
+        Assert.assertEquals(aboutPage.getEmail(), ProfileData.EMAIL);
+        Assert.assertEquals(aboutPage.getPhone(), ProfileData.PHONE);
+        Assert.assertEquals(aboutPage.getLocation(), ProfileData.LOCATION);
         Assert.assertTrue(aboutPage.getUniversity().contains("UIT"), "Thiếu tên trường UIT!");
-        Assert.assertTrue(aboutPage.getGPA().contains("8.13"), "GPA không khớp!");
+        Assert.assertTrue(aboutPage.getGPA().contains(ProfileData.GPA), "GPA không khớp!");
     }
 
     @Test(priority = 3, description = "Kiểm tra hình ảnh chân dung và giao diện")
