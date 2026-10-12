@@ -14,8 +14,7 @@ public class AboutPage extends BasePage {
     private By portraitImg = By.xpath("//img[@alt='Profile Photo']");
     private By mainContainer = By.xpath("//div[@id='root']/div[1]");
     private By contentGrid = By.xpath("//div[contains(@class, 'grid')]");
-    private By crystalBackground = By.xpath(
-            "//canvas | //div[contains(@class, 'crystal-background')] | //div[contains(@class, 'fixed inset-0')]");
+    private By crystalBackground = By.xpath("//canvas");
     private By qaBadge = By.xpath("//span[text()='QA Engineer']");
     private By profileSection = By.xpath("//h2[text()='Personal Profile']/parent::div/parent::div");
 
