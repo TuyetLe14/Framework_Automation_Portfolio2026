@@ -86,14 +86,17 @@ public class HomeTest extends BaseTest {
     public void testResponsiveLayout() {
         getDriver().get(ConfigsData.URL);
         HomePage homePage = new HomePage(getDriver());
+        WebDriverWait layoutWait = new WebDriverWait(getDriver(), Duration.ofSeconds(10));
+
         getDriver().manage().window().setSize(new Dimension(390, 844));
+        layoutWait.until(d -> homePage.isStackedLayout());
+        Assert.assertTrue(homePage.isStackedLayout(),
+            "Lỗi: Mobile layout không chuyển sang dạng cột! flex-direction: "
+                    + homePage.getContentFlexDirection());
 
-        String layoutClass = homePage.getContentGridClass();
-        System.out.println("Layout Class trên Mobile: " + layoutClass);
-
-        Assert.assertTrue(layoutClass.contains("flex-col"), 
-        "Lỗi: Mobile layout không chuyển sang dạng cột! Class tìm thấy: " + layoutClass);
-
-        getDriver().manage().window().maximize();
+        getDriver().manage().window().setSize(new Dimension(1440, 900));
+        layoutWait.until(d -> !homePage.isStackedLayout());
+        Assert.assertFalse(homePage.isStackedLayout(),
+            "Lỗi: Desktop layout không chuyển về dạng hàng!");
     }
 }
