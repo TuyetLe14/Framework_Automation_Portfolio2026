@@ -17,7 +17,13 @@ public class AboutPage extends BasePage {
     private By crystalBackground = By.xpath("//canvas");
     private By qaBadge = By.xpath("//span[text()='QA Engineer']");
     private By profileSection = By.xpath("//h2[text()='Personal Profile']/parent::div/parent::div");
-
+    private By degreeBadge = By.xpath("//span[contains(text(),'Degree:')]");
+    private By majorText = By.xpath("//p[contains(text(),'Major:')]");
+    private By focusAreaValue = By.xpath("//h4[text()='Focus Area']/following-sibling::p");
+    private By backgroundValue = By.xpath("//h4[text()='Background']/following-sibling::p");
+    private By ambitionValue = By.xpath("//h4[text()='Ambition']/following-sibling::p");
+    private By homeNavLink = By.xpath("//nav//a[@href='#/']");
+    
     public AboutPage(WebDriver driver) {
         super(driver);
     }
@@ -106,4 +112,11 @@ public class AboutPage extends BasePage {
     public boolean isProfileVisibleAfterAnimation() {
         return wait.until(ExpectedConditions.visibilityOfElementLocated(profileSection)).isDisplayed();
     }
+
+    public String getDegree() { return getTextElement(degreeBadge); }
+    public String getMajor() { return getTextElement(majorText); }
+    public String getFocusArea() { return getTextElement(focusAreaValue); }
+    public String getBackground() { return getTextElement(backgroundValue); }
+    public String getAmbition() { return getTextElement(ambitionValue); }
+    public void goToHome() { clickElement(homeNavLink); }
 }
