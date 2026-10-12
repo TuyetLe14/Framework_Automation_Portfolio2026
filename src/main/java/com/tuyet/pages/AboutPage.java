@@ -2,6 +2,7 @@ package com.tuyet.pages;
 
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import java.util.Arrays;
 
 public class AboutPage extends BasePage {
 
@@ -69,8 +70,8 @@ public class AboutPage extends BasePage {
     }
 
     public boolean isLightModeActive() {
-        String classes = getThemeAttribute();
-        return classes.contains("bg-white") || classes.contains("text-slate-900");
+        return Arrays.asList(getThemeAttribute().split("\\s+"))
+            .contains("bg-slate-50");
     }
 
     public boolean isCrystalBackgroundPresent() {
