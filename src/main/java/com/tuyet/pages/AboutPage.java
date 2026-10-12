@@ -66,7 +66,10 @@ public class AboutPage extends BasePage {
     }
 
     public boolean isStackedLayout() {
-        return getAttribute(contentGrid, "class").contains("grid-cols-1");
+        String columns = wait.until(
+            ExpectedConditions.visibilityOfElementLocated(contentGrid))
+            .getCssValue("grid-template-columns");
+        return columns.trim().split("\\s+").length == 1;
     }
 
     public boolean isLightModeActive() {
