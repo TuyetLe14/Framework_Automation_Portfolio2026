@@ -11,6 +11,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import com.tuyet.base.BaseTest;
 import com.tuyet.constants.ConfigsData;
 import com.tuyet.pages.HomePage;
+import com.tuyet.constants.ProfileData;
 
 public class HomeTest extends BaseTest {
 
@@ -77,7 +78,7 @@ public class HomeTest extends BaseTest {
         getDriver().get(ConfigsData.URL);
         HomePage homePage = new HomePage(getDriver());
 
-        Assert.assertEquals(homePage.getGithubHref(), "https://github.com/TuyetLe14");
+        Assert.assertEquals(homePage.getGithubHref(), ProfileData.GITHUB_URL);
         Assert.assertTrue(homePage.getFacebookHref().contains("facebook.com/tuyet.lehuynhanh"));
         Assert.assertTrue(homePage.getTiktokHref().contains("tiktok.com"));
     }
