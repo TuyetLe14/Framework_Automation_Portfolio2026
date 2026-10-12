@@ -65,11 +65,14 @@ public class AboutPage extends BasePage {
         }
     }
 
+    public String getContentFlexDirection() {
+        return wait.until(
+            ExpectedConditions.visibilityOfElementLocated(CONTAINER_CONTENT_GRID))
+            .getCssValue("flex-direction");
+    }
+
     public boolean isStackedLayout() {
-        String columns = wait.until(
-            ExpectedConditions.visibilityOfElementLocated(contentGrid))
-            .getCssValue("grid-template-columns");
-        return columns.trim().split("\\s+").length == 1;
+        return "column".equals(getContentFlexDirection());
     }
 
     public boolean isLightModeActive() {
