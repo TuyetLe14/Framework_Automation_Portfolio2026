@@ -131,4 +131,27 @@ jobs:
         name: api-test-reports
         path: target/surefire-reports/
         retention-days: 30
+  db-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Set up JDK 21
+      uses: actions/setup-java@v4
+      with:
+        java-version: '21'
+        distribution: 'temurin'
+        cache: maven
+
+    - name: Run Database Tests
+      run: mvn clean test -B -DsuiteXmlFile=testng-db.xml
+
+    - name: Publish Database Test Results
+      if: always()
+      uses: EnricoMi/publish-unit-test-result-action@v2
+      with:
+        files: target/surefire-reports/TEST-*.xml
+        check_name: Database Test Results
   
