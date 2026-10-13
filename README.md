@@ -1,6 +1,8 @@
 # Framework Automation Portfolio 2026
 
+[
 ![CI](https://github.com/TuyetLe14/Framework_Automation_Portfolio2026/actions/workflows/test-automation.yml/badge.svg)
+](https://github.com/TuyetLe14/Framework_Automation_Portfolio2026/actions/workflows/test-automation.yml)
 
 A Java-based web UI test automation framework built with **Selenium WebDriver, TestNG, Maven, and Java 21**.
 
@@ -54,7 +56,8 @@ The project also contains a separate **k6 performance-testing suite** and GitHub
 | Monte Media | Video recording |
 | GitHub Actions | CI/CD |
 | k6 | Performance testing |
-
+| REST Assured | API testing |
+| H2 + JDBC | Embedded database for SQL tests |
 ---
 
 # Main Features
@@ -147,8 +150,10 @@ Framework_Automation_Portfolio2026/
 │           └── application.properties
 │
 ├── pom.xml
-├── testng.xml
-├── testng-parallel.xml
+├── testng.xml                (UI suite)
+├── testng-parallel.xml       (UI suite, parallel)
+├── testng-api.xml            (API suite)
+├── testng-db.xml             (database suite)
 └── README.md
 ```
 
@@ -319,7 +324,7 @@ mvn clean test -DsuiteXmlFile=testng-parallel.xml
 
 Parallel execution can reduce total execution time when tests are independent and properly isolated.
 
-**WebDriver management implemented with ThreadLocal to ensure thread-safety during parallel execution
+**Thread safety:** WebDriver management is implemented with `ThreadLocal`, so each test thread has its own browser instance.
 ---
 
 # Cross-Browser Execution
@@ -579,19 +584,21 @@ API tests run as a separate job (`api-test`) in the same workflow. The job runs 
 
 The portfolio site has no database, so these SQL tests run against an **embedded H2 database** with a sample e-commerce schema (customers, products, orders, order items). The database is rebuilt before every test, so tests stay independent and need no external service.
 
-| Area | Verifies |
-| ---- | -------- |
+| Area                             | Verifies                                                                                |
+| -------------------------------- | --------------------------------------------------------------------------------------- |
 | Data quality rules (data-driven) | No duplicate emails, no orphan rows, order total equals sum of items, no negative stock |
-| Constraints (data-driven) | UNIQUE, NOT NULL, FOREIGN KEY and CHECK violations are rejected with the right SQLSTATE |
-| Business queries | LEFT JOIN, SUM aggregation, GROUP BY with ORDER BY |
-| Security | Parameterized queries treat input as data (SQL injection attempt) |
-| Transactions | Rollback undoes uncommitted changes |
+| Constraints (data-driven)        | UNIQUE, NOT NULL, FOREIGN KEY and CHECK violations are rejected with the right SQLSTATE |
+| Business queries                 | LEFT JOIN, SUM aggregation, GROUP BY with ORDER BY                                      |
+| Security                         | Parameterized queries treat input as data (SQL injection attempt)                       |
+| Transactions                     | Rollback undoes uncommitted changes                                                     |
 
 Run database tests:
 
 ```
 mvn clean test -DsuiteXmlFile=testng-db.xml
 ```
+
+---
 
 ## Performance Workflow
 
@@ -635,11 +642,19 @@ When running in GitHub Actions, generated results can be uploaded as workflow ar
 
 # Test Strategy
 
-The current project focuses on web UI automation and performance testing.
+The project covers web UI, API, database, and performance testing.
 
 ### Functional Testing
 
 Automated browser-based scenarios validate application behavior.
+
+### API Testing
+
+REST endpoints are verified for status codes, response content, and response time.
+
+### Database Testing
+
+SQL tests verify data quality rules, constraints, queries, security, and transactions.
 
 ### Regression Testing
 
