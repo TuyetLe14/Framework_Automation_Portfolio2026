@@ -325,6 +325,7 @@ mvn clean test -DsuiteXmlFile=testng-parallel.xml
 Parallel execution can reduce total execution time when tests are independent and properly isolated.
 
 **Thread safety:** WebDriver management is implemented with `ThreadLocal`, so each test thread has its own browser instance.
+
 ---
 
 # Cross-Browser Execution
