@@ -24,4 +24,9 @@
         </classes>
     </test>
 
+    <test name="Smoke Tests">
+        <classes>
+            <class name="com.tuyet.tests.SmokeTest" />
+        </classes>
+    </test>
 </suite>
