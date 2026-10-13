@@ -24,6 +24,11 @@ public class AboutTest extends BaseTest {
         homePage = new HomePage(getDriver());
     }
 
+    private void openAboutPage() {
+        getDriver().get(ConfigsData.URL + "/#/about");
+        aboutPage.waitForPageLoaded();
+    }
+    
     @Test(description = "Kiểm tra điều hướng đến trang About")
     public void testNavigationToAbout() {
         getDriver().get(ConfigsData.URL);
@@ -35,8 +40,7 @@ public class AboutTest extends BaseTest {
 
     @Test(description = "Kiểm tra thông tin liên hệ và học vấn")
     public void testContactAndEducation() {
-        getDriver().get(ConfigsData.URL + "/#/about");
-        aboutPage.waitForPageLoaded();
+        openAboutPage();
 
         Assert.assertEquals(aboutPage.getEmail(), ProfileData.EMAIL);
         Assert.assertEquals(aboutPage.getPhone(), ProfileData.PHONE);
@@ -47,7 +51,7 @@ public class AboutTest extends BaseTest {
 
     @Test(description = "Kiểm tra hình ảnh chân dung và giao diện")
     public void testVisualElements() {
-        getDriver().get(ConfigsData.URL + "/#/about");
+        openAboutPage();
 
         Assert.assertTrue(aboutPage.isPortraitImageLoaded(), "Lỗi: Ảnh chân dung không hiển thị đúng!");
         Assert.assertTrue(aboutPage.isCrystalBackgroundPresent(), "Không tìm thấy Crystal Background!");
@@ -55,7 +59,7 @@ public class AboutTest extends BaseTest {
 
     @Test(description = "Kiểm tra Responsive Layout (Stacked on Mobile)")
     public void testResponsiveLayout() {
-        getDriver().get(ConfigsData.URL + "/#/about");
+        openAboutPage();
         getDriver().manage().window().setSize(new Dimension(390, 844));
         aboutPage.waitForLayoutChange();
         Assert.assertTrue(aboutPage.isStackedLayout(), "Layout không chuyển sang dạng stacked (1 cột) trên mobile!");
@@ -64,15 +68,14 @@ public class AboutTest extends BaseTest {
 
     @Test(description = "Kiểm tra định vị nghề nghiệp và Animation hiển thị")
     public void testProfessionalTagAndAnimation() {
-        getDriver().get(ConfigsData.URL + "/#/about");
+        openAboutPage();
         Assert.assertEquals(aboutPage.getQABadgeText(), "QA ENGINEER", "Sai định vị nghề nghiệp!");
         Assert.assertTrue(aboutPage.isProfileVisibleAfterAnimation(), "Lỗi: Animation làm ẩn nội dung trang About!");
     }
 
     @Test(description = "Kiểm tra chi tiết học vấn và định hướng nghề nghiệp")
     public void testEducationAndCareerDetails() {
-        getDriver().get(ConfigsData.URL + "/#/about");
-        aboutPage.waitForPageLoaded();
+        openAboutPage();
 
         Assert.assertTrue(aboutPage.getDegree().contains(ProfileData.DEGREE), "Sai xếp loại bằng!");
         Assert.assertTrue(aboutPage.getMajor().contains(ProfileData.MAJOR), "Sai chuyên ngành!");
@@ -97,8 +100,7 @@ public class AboutTest extends BaseTest {
 
     @Test(description = "Bấm icon Home trên thanh điều hướng từ About")
     public void testHomeNavLinkFromAbout() {
-        getDriver().get(ConfigsData.URL + "/#/about");
-        aboutPage.waitForPageLoaded();
+        openAboutPage();
 
         aboutPage.goToHome();
 
