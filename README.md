@@ -649,6 +649,10 @@ The project covers web UI, API, database, and performance testing.
 
 Automated browser-based scenarios validate application behavior.
 
+### Smoke Testing
+
+Fast checks that do not depend on page-specific locators verify that the site is alive on every main route: correct page title, no broken images, no links without `href`, the route survives a browser refresh, and an unknown route does not leave a blank page. The smoke tests run as part of the UI suite (`testng.xml`).
+
 ### API Testing
 
 REST endpoints are verified for status codes, response content, and response time.
